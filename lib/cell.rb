@@ -4,6 +4,7 @@ class Cell
 
   def initialize(coordinate, ship=nil)
     @coordinate  = coordinate
+    @ship = ship
     @fired_on    = false
   end
 
