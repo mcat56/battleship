@@ -53,19 +53,20 @@ class BoardTest < MiniTest::Test
 
   def test_it_makes_a_board
     assert_instance_of Hash, @board.cells
-    # call make cells/board method
+    @board.create_board
     refute_nil @board.cells
-    key,value = @board.cells.first
-    assert_equal "A1", key
+    assert_equal "A1", @cells.key(@cell_A1)
     assert_instance_of Cell, @board.cells.values
-    assert_equal
+    assert_equal 16, @board.length * @board.width
+    @cells.each do |key,value|
+      assert_equal true, value == @board.cells[key]
+    end
+
   end
 
 
-  def test_it_has_cells
-    assert_equal 16, @board.cells.length
+  def test_it_has_cells_hash
     assert_instance_of Hash, @board.cells
-    assert_instance_of Cell, @board.cells.values
   end
 
   def test_valid_coordinate?
@@ -88,6 +89,22 @@ class BoardTest < MiniTest::Test
     assert_equal @cruiser, @board.cells("A2").ship
     assert_equal @cruiser, @board.cells("A3").ship
   end
+
+  def test_render
+    @board.place(@cruiser,["A1","A2","A3"])
+    assert_equal "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n", @board.render
+    assert_equal "  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n", @board.render(true)
+    @board.cells["A1"].fire_upon
+    assert_equal "  1 2 3 4 \nA H S S . \nB . . . . \nC . . . . \nD . . . . \n", @board.render(true)
+    @board.cells["B2"].fire_upon
+    assert_equal "  1 2 3 4 \nA H S S . \nB . M . . \nC . . . . \nD . . . . \n", @board.render(true)
+    @board.cells["A2"].fire_upon
+    assert_equal "  1 2 3 4 \nA H H S . \nB . M . . \nC . . . . \nD . . . . \n", @board.render(true)
+    @board.cells["A3"].fire_upon
+    assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . . . . \nD . . . . \n", @board.render(true)
+  end
+
+
 
 
 end
