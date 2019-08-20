@@ -3,7 +3,7 @@ class Cell
 
   def initialize(coordinate, ship=nil)
     @coordinate  = coordinate
-    @fired_on = false
+    @fired_on    = false
   end
 
   def empty?
