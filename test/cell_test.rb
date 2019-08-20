@@ -40,7 +40,7 @@ class CellTest < Minitest::Test
     assert @cell.fired_upon?
   end
 
-  def fire_upon
+  def test_fire_upon
     refute @cell.fired_upon?
     @cell.fire_upon
     assert @cell.fired_upon?
@@ -49,7 +49,7 @@ class CellTest < Minitest::Test
     assert @cell.fired_upon?
   end
 
-  def render
+  def test_render
     # No ship
     assert_equal ".", @cell.render
     @cell.fire_upon
