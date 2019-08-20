@@ -34,7 +34,9 @@ class ShipTest < MiniTest::Test
     assert_equal 3, @cruiser.health
     refute @cruiser.sunk?
     @cruiser.hit
+    refute @cruiser.sunk?
     @cruiser.hit
+    refute @cruiser.sunk?
     @cruiser.hit
     assert @cruiser.sunk?
   end

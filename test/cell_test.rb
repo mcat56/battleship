@@ -21,10 +21,14 @@ class CellTest < MiniTest::Test
 
   def test_ship
     assert_nil @cell.ship
+    @cell.place_ship(@cruiser)
+    assert_equal @cruiser, @cell.ship
   end
 
   def test_empty?
     assert @cell.empty?
+    @cell.place_ship(@cruiser)
+    refute @cell.empty?
   end
 
   def test_place_ship
@@ -50,6 +54,8 @@ class CellTest < MiniTest::Test
 
     @cell.fire_upon
     assert @cell.fired_upon?
+    @cell.fire_upon
+    assert @cell.fired_upon?
   end
 
   def test_render
@@ -68,7 +74,6 @@ class CellTest < MiniTest::Test
     cell_3.place_ship(@voyager)
     assert_equal "S", cell_3.render(true)
     cell_3.fire_upon
-    cell_3.ship.hit
     cell_3.ship.hit
     cell_3.ship.hit
     cell_3.ship.hit
