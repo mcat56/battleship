@@ -35,7 +35,7 @@ class Cell
           "H"
       end
     else
-      return "S" if (empty? && render_ship)
+      return "S" if (!empty? && render_ship)
         "." 
     end
   end
