@@ -16,4 +16,4 @@ attr_reader :cells
 
   def valid_placement?(ship,coordinates)
     if ship.length == coordinates.length
-  end 
+  end

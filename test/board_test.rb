@@ -24,6 +24,6 @@ class BoardTest < MiniTest::Test
 
   def test_valid_placement?
     assert_equal cruiser.length, coordinates.length
-    #more code 
+    #more code
   end
 end
