@@ -1,5 +1,7 @@
+require 'pry'
+
 class Board
-attr_reader :cells
+attr_reader :cells, :length, :width
 
   def initialize(length = 4, width = 4)
     @cells = Hash.new
@@ -18,6 +20,42 @@ attr_reader :cells
 
   def create_board(length,width)
 
+    x = (1..@width).to_a
+    y = ("A"..("A".ord+(@length-1)).chr).to_a
+    zips = y.zip(x)
+    coordinates = []
+    zips.each do |array|
+      coordinates << array.join
+    end
+    coordinates.each do |coordinate|
+      @cells[coordinate] = Cell.new(coordinate)
+    end
+    @cells
+  end
+
+  def place(ship,coordinates)
+    @cells.values.each do |cell|
+      if cell.empty?
+        coordinates.each do |coordinate|
+          p @cells[coordinate]
+          @cells[coordinate].place_ship(ship)
+        end
+      end
+    end
+  end
+
+  def render
+    x = (1..@width).to_a
+    y = ("A"..("A".ord+@length).chr).to_a
+    string = "  "
+    x.each do |num|
+      string << "#{num} "
+    end
+    y.each do |letter|
+      string << "\n#{letter}" + " ." * y.length
+    end
+    string << " \n"
+    puts string
   end
 
 
@@ -26,6 +64,18 @@ attr_reader :cells
       row = []
       column = []
       coordinates.each do |coordinate|
-        row << coordinate.split("").first
-        column << coordinate.split("").last
-        if  ( [(coordinate.split("").last)..ship.width] == row && [(coorindate.split("").first)]*ship.length == column ) || ( [coordinate.split("").first] == row && ["A"]*ship.length == column )
+        letter = coordinate.split("").first
+        number = coordinate.split("").last
+        row << number
+        column << letter
+        if  ( (number..(number+ship.width).to_a == row && [letter]*ship.length == column ) || ( [number]*ship.width == row && (letter..((letter.ord)+ship.length).chr)).to_a == column )
+          true
+        end
+      end
+    else
+      false
+    end
+  end
+
+
+end
