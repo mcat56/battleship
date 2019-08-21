@@ -52,6 +52,7 @@ class BoardTest < MiniTest::Test
   end
 
   def test_it_makes_a_board
+    skip
     assert_instance_of Hash, @board.cells
     @board.create_board
     refute_nil @board.cells
@@ -65,26 +66,32 @@ class BoardTest < MiniTest::Test
 
   def test_makes_alphabetical_coordinate
     assert_equal "Z", @board.calculate_alphabetical_coordinate(26)
-    assert_equal "AB", @board.calculate_alphabetical_coordinate(28)
-    assert_equal "AAA", @board.calculate_alphabetical_coordinate(677)
+    assert_equal "AA", @board.calculate_alphabetical_coordinate(27)
+    assert_equal "AZ", @board.calculate_alphabetical_coordinate(52)
+    assert_equal "BA", @board.calculate_alphabetical_coordinate(53)
+    assert_equal "AAA", @board.calculate_alphabetical_coordinate(703)
   end
 
 
   def test_it_has_cells_hash
+    skip
     assert_instance_of Hash, @board.cells
   end
 
   def test_valid_coordinate?
+    skip
     assert_equal true, @board.valid_coordinate?("A1")
     assert_equal false, @board.valid_coordinate?("E1")
   end
 
   def test_valid_placement?
+    skip
     assert_equal true, @board.place(@cruiser,["A1","A2","A3"])
     assert_equal false, @board.valid_placement?(@submarine, ["A1", "B1"])
   end
 
   def test_place
+    skip
     @board.place(@cruiser,["A1","A2","A3"])
     assert_equal @cruiser, @board.cells("A1").ship
     assert_equal @cruiser, @board.cells("A2").ship
@@ -96,6 +103,7 @@ class BoardTest < MiniTest::Test
   end
 
   def test_render
+    skip
     @board.place(@cruiser,["A1","A2","A3"])
     assert_equal "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n", @board.render
     assert_equal "  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n", @board.render(true)
