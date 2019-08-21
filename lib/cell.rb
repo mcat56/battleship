@@ -8,6 +8,11 @@ class Cell
     @fired_on    = false
   end
 
+  def ==(cell)
+    return true if @coordinate == cell.coordinate
+      false
+  end
+
   def empty?
     @ship == nil
   end

@@ -19,8 +19,8 @@ class CellTest < Minitest::Test
   end
 
   def test_cell_equality
-    @equal = Cell.new("B4")
-    assert_equal @equal, @cell
+    equal_cell = Cell.new("B4")
+    assert_equal true, @cell == equal_cell 
   end
 
   def test_empty?
