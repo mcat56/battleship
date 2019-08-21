@@ -82,22 +82,25 @@ class BoardTest < MiniTest::Test
   end
 
   def test_valid_placement?
-    assert_equal true, @board.place(@cruiser,["A1","A2","A3"])
+    @board.create_board(4, 4)
+    @board.place(@cruiser,["A1","A2","A3"])
     assert_equal false, @board.valid_placement?(@submarine, ["A1", "B1"])
   end
 
   def test_place
+    @board.create_board(4, 4)
     @board.place(@cruiser,["A1","A2","A3"])
-    assert_equal @cruiser, @board.cells("A1").ship
-    assert_equal @cruiser, @board.cells("A2").ship
-    assert_equal @cruiser, @board.cells("A3").ship
+    assert_equal @cruiser, @board.cells["A1"].ship
+    assert_equal @cruiser, @board.cells["A2"].ship
+    assert_equal @cruiser, @board.cells["A3"].ship
     @board.place(@submarine,["A1","A2"])
-    assert_equal @cruiser, @board.cells("A1").ship
-    assert_equal @cruiser, @board.cells("A2").ship
-    assert_equal @cruiser, @board.cells("A3").ship
+    assert_equal @cruiser, @board.cells["A1"].ship
+    assert_equal @cruiser, @board.cells["A2"].ship
+    assert_equal @cruiser, @board.cells["A3"].ship
   end
 
   def test_render
+    @board.create_board(4, 4)
     @board.place(@cruiser,["A1","A2","A3"])
     assert_equal "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n", @board.render
     assert_equal "  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n", @board.render(true)
@@ -110,8 +113,5 @@ class BoardTest < MiniTest::Test
     @board.cells["A3"].fire_upon
     assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . . . . \nD . . . . \n", @board.render(true)
   end
-
-
-
 
 end
