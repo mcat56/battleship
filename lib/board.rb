@@ -15,7 +15,7 @@ attr_reader :cells, :length, :width
     numeric_range = 1..length
     character_range = 1..width
 
-    character_range.each do |w| 
+    character_range.each do |w|
       character_value = calculate_alphabetical_coordinate(w)
       numeric_range.each do |l|
         coordinate = character_value + l.to_s
@@ -46,17 +46,11 @@ attr_reader :cells, :length, :width
 
 
   def place(ship,coordinates)
-    valid = []
-    coordinates.each do |coordinate|
-      valid << @cells[coordinate].empty?
-    end
-      if valid.include?(false)
-        return
-      else
-        coordinates.each do |coordinate|
-          @cells[coordinate].place_ship(ship)
-        end
+    if valid_placement?
+      coordinates.each do |coordinate|
+        @cells[coordinate].place_ship(ship)
       end
+    end
   end
 
   def render(display=false)
@@ -90,27 +84,28 @@ attr_reader :cells, :length, :width
 
 
   def valid_placement?(ship,coordinates)
-    if ship.length == coordinates.length
-      length = ship.length - 1
-      row = []
-      column = []
-      coordinates.each do |coordinate|
-        letter = coordinate.split("").first
-        number = coordinate.split("").last.to_i
-        row << number
-        column << letter
-      end
-      letter = coordinates[0].split("").first
-      number = coordinates[0].split("").last.to_i
-      limit = number + length
-      last = (letter.ord + length).chr
-        if (  ((number..limit).to_a == row) && ([letter]*length == column)  )  || (   (([number]*length) == row)    &&    ((letter..last).to_a == column)   )
-          true
-        else
-          false
-        end
-
+    if ship.length != coordinates.length
+       return false
     end
+    if coordinates.any? do |coordinate|
+      vaid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
+      end
+      return false
+    end
+    keys = @board.cells.keys
+    x = keys.index(coordinates.first)
+    right = keys[x+1]
+    next_row = keys[x+@width]
+      if coordinates[1] == right
+
+      elsif coordinates[1] == next_row
+
+      else
+        false
+      end
   end
+
+
+
 
 end
