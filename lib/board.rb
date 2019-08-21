@@ -2,13 +2,23 @@ class Board
 attr_reader :cells
 
   def initialize(length=4, width=4)
-    @cells  = cells
+    @cells  = {}
     @length = length
     @width  = width
   end
 
   def create_board(length, width)
-    true
+    numeric_range = 1..length
+    character_range = 1..width
+
+    character_range.each do |w| 
+      character_value = calculate_alphabetical_coordinate(w)
+      character_range.each do |l|
+        coordinate = character_value + l.to_s
+        new_cell = Cell.new(coordinate)
+        @cells[new_cell.coordinate] = new_cell
+      end
+    end
   end
 
   def calculate_alphabetical_coordinate(num)
