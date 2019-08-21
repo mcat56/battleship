@@ -2,9 +2,10 @@ class Board
 attr_reader :cells
 
   def initialize(length=4, width=4)
-    @cells  = {}
+    @cells = {}
     @length = length
     @width  = width
+    create_board(@length, @width)
   end
 
   def create_board(length, width)
@@ -13,7 +14,7 @@ attr_reader :cells
 
     character_range.each do |w| 
       character_value = calculate_alphabetical_coordinate(w)
-      character_range.each do |l|
+      numeric_range.each do |l|
         coordinate = character_value + l.to_s
         new_cell = Cell.new(coordinate)
         @cells[new_cell.coordinate] = new_cell
@@ -36,16 +37,19 @@ attr_reader :cells
 
   end
 
-  # def valid_coordinate?
-  #   if cell.coordinate.chars.first =~ /^[ABCD/ && cell.coordinate.chars.last =~ /[1234]/
-  #     true
-  #   else
-  #     false
-  #   end
-  # end
+  def valid_coordinate?(coordinate)
+   @cells.has_key?(coordinate)
+  end
 
-  # def valid_placement?(ship,coordinates)
-  #   if ship.length == coordinates.length
+  def valid_placement?(ship,coordinates)
+    if ship.length != coordinates.length
+      return false
+    end
+    if coordinates.any? { |coordinate| @cells[coordinate].empty? }
+      return false
+    end
 
-  # end
+
+
+  end
 end
