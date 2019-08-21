@@ -1,16 +1,16 @@
 class Board
-attr_reader :cells, :length, :width
+attr_reader :cells, :columns, :rows
 
-  def initialize(length=4, width=4)
-    @cells = {}
-    @length = length
-    @width  = width
-    create_board(@length, @width)
+  def initialize(columns=4, rows=4)
+    @cells   = {}
+    @columns = columns
+    @rows    = rows
+    create_board(@columns, @rows)
   end
 
-  def create_board(length, width)
-    numeric_range = 1..length
-    character_range = 1..width
+  def create_board(columns, rows)
+    numeric_range = 1..columns
+    character_range = 1..rows
 
     character_range.each do |w| 
       character_value = calculate_alphabetical_coordinate(w)
@@ -56,11 +56,11 @@ attr_reader :cells, :length, :width
   end
 
   def render(display=false)
-    columns = 1..@length
-    rows    = 1..@width
+    columns = 1..@columns
+    rows    = 1..@rows
     
-    number_string_length = @length.to_s.length
-    alphabetical_length  = calculate_alphabetical_coordinate(@width).length
+    number_string_length = @columns.to_s.length
+    alphabetical_length  = calculate_alphabetical_coordinate(@rows).length
     padding = [number_string_length, alphabetical_length].max
 
     # render top row
