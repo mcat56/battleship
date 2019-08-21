@@ -1,5 +1,3 @@
-require 'pry'
-
 class Board
 attr_reader :cells, :length, :width
 
@@ -43,7 +41,7 @@ attr_reader :cells, :length, :width
    @cells.has_key?(coordinate)
   end
 
-  def place(ship,coordinates)
+  def place(ship, coordinates)
     valid = []
     coordinates.each do |coordinate|
       valid << @cells[coordinate].empty?
@@ -58,20 +56,46 @@ attr_reader :cells, :length, :width
   end
 
   def render(display=false)
-    x = (1..@width).to_a
-    y = ("A"..("A".ord+(@length-1)).chr).to_a
-    string = "  "
-    x.each do |num|
-      string << "#{num} "
+    columns = 1..@length
+    rows    = 1..@width
+    
+    number_string_length = @length.to_s.length
+    alphabetical_length  = calculate_alphabetical_coordinate(@width).length
+    padding = [number_string_length, alphabetical_length].max
+
+    # render top row
+    row = " " * (padding + 1)
+    columns.each do |col|
+      row += "#{col}".center(padding + number_string_length)
     end
-    y.each do |letter|
-      string << "\n#{letter}" + " ." * y.length + " "
+
+    puts row
+
+    # Render each row
+    rows.each do |rw|
+      letter = calculate_alphabetical_coordinate(rw)
+      row = letter.center(padding + 1)
+      columns.each do |col|
+        coordinate = letter + col.to_s
+        row += "#{@cells[coordinate].render(display)}".center(padding + number_string_length)
+      end
+      puts row
     end
-    string << "\n"
+
+    # x = (1..@width).to_a
+    # y = ("A"..("A".ord+(@length-1)).chr).to_a
+    # string = "  "
+    # x.each do |num|
+    #   string << "#{num} "
+    # end
+    # y.each do |letter|
+    #   string << "\n#{letter}" + " ." * y.length + " "
+    # end
+    # string << "\n"
   end
 
 
-  def valid_placement?(ship,coordinates)
+  def valid_placement?(ship, coordinates)
     # if ship.length != coordinates.length
     #   return false
     # end
