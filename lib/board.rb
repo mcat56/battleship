@@ -69,18 +69,19 @@ attr_reader :cells, :length, :width
       row += "#{col}".center(padding + number_string_length)
     end
 
-    puts row
+    row += "\n"
 
     # Render each row
     rows.each do |rw|
       letter = calculate_alphabetical_coordinate(rw)
-      row = letter.center(padding + 1)
+      row += letter.center(padding + 1)
       columns.each do |col|
         coordinate = letter + col.to_s
         row += "#{@cells[coordinate].render(display)}".center(padding + number_string_length)
       end
-      puts row
+      row += "\n"
     end
+    row
 
     # x = (1..@width).to_a
     # y = ("A"..("A".ord+(@length-1)).chr).to_a
