@@ -65,11 +65,17 @@ class BoardTest < MiniTest::Test
   end
 
   def test_makes_alphabetical_coordinate
+    assert_equal "A", @board.calculate_alphabetical_coordinate(1)
+    assert_equal "B", @board.calculate_alphabetical_coordinate(2)
+    assert_equal "C", @board.calculate_alphabetical_coordinate(3)
+    assert_equal "D", @board.calculate_alphabetical_coordinate(4)
     assert_equal "Z", @board.calculate_alphabetical_coordinate(26)
     assert_equal "AA", @board.calculate_alphabetical_coordinate(27)
     assert_equal "AZ", @board.calculate_alphabetical_coordinate(52)
     assert_equal "BA", @board.calculate_alphabetical_coordinate(53)
+    assert_equal "CC", @board.calculate_alphabetical_coordinate(81)
     assert_equal "AAA", @board.calculate_alphabetical_coordinate(703)
+    assert_equal "AAAB", @board.calculate_alphabetical_coordinate(18280)
   end
 
 
