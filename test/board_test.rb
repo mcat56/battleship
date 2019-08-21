@@ -53,11 +53,6 @@ class BoardTest < MiniTest::Test
 
   def test_it_makes_a_board
     assert_instance_of Hash, @board.cells
-    @board.create_board(4, 4)
-    refute_nil @board.cells
-    assert_equal "A1", @board.cells.key(@cell_A1)
-    assert_instance_of Cell, @board.cells["A1"]
-    assert_equal 16, @board.length * @board.width
     @board.cells.each do |key,value|
       assert_equal true, value == @board.cells[key]
     end
@@ -75,13 +70,11 @@ class BoardTest < MiniTest::Test
   end
 
   def test_valid_placement?
-    @board.create_board(4, 4)
     @board.place(@cruiser,["A1","A2","A3"])
     assert_equal false, @board.valid_placement?(@submarine, ["A1", "B1"])
   end
 
   def test_place
-    @board.create_board(4, 4)
     @board.place(@cruiser,["A1","A2","A3"])
     assert_equal @cruiser, @board.cells["A1"].ship
     assert_equal @cruiser, @board.cells["A2"].ship
@@ -93,7 +86,6 @@ class BoardTest < MiniTest::Test
   end
 
   def test_render
-    @board.create_board(4, 4)
     @board.place(@cruiser,["A1","A2","A3"])
     assert_equal "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n", @board.render
     assert_equal "  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n", @board.render(true)

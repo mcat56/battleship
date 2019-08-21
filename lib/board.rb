@@ -54,10 +54,26 @@ attr_reader :cells, :length, :width
     x.each do |num|
       string << "#{num} "
     end
-    y.each do |letter|
-      string << "\n#{letter}" + " ." * y.length + " "
-    end
-    string << "\n"
+      if display == false
+        y.each do |letter|
+          string << "\n#{letter}" + " ." * y.length + " "
+        end
+        string << "\n"
+      else
+        render_true = []
+        @cells.each_value do |value|
+          render_true << value.render(true)
+        end
+        i = 0
+        y.each do |letter|
+          string << "\n#{letter} "
+          y.length.times do
+            string << "#{render_true[i]} "
+            i += 1
+          end
+        end
+        string << "\n"
+      end
   end
 
 
