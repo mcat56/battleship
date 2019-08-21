@@ -61,7 +61,12 @@ class BoardTest < MiniTest::Test
     @cells.each do |key,value|
       assert_equal true, value == @board.cells[key]
     end
+  end
 
+  def test_makes_alphabetical_coordinate
+    assert_equal "Z", @board.calculate_alphabetical_coordinate(26)
+    assert_equal "AB", @board.calculate_alphabetical_coordinate(28)
+    assert_equal "AAA", @board.calculate_alphabetical_coordinate(677)
   end
 
 
