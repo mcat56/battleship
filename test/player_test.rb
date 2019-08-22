@@ -9,7 +9,12 @@ class PlayerTest < MiniTest::Test
 
   def setup
     @player = Player.new("Mario")
-    @player2 = Player.new
+    @computer = Player.new
   end
 
-  
+  def test_it_exists
+    assert_instance_of Player, @player
+    assert_instance_of Player, @computer
+  end
+
+  def
