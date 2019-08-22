@@ -17,15 +17,6 @@ class Cell
     @ship == nil
   end
 
-  def ==(cell)
-    if @coordinate == cell.coordinate
-      true
-    else
-      false
-    end
-  end
-
-
   def place_ship(ship)
     @ship = ship
   end
