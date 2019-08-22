@@ -75,13 +75,11 @@ attr_reader :cells, :columns, :rows
 
   def valid_placement?(ship,coordinates)
     if ship.length != coordinates.length
-       return false
+       false
     end
-    if coordinates.any? do |coordinate|
-      valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
-    end
-      return false
-    end
+    false if coordinates.any? { |coordinate| valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false }
+      # false
+    # end
 
     keys                    = @cells.keys
     coordinate_index        = keys.index(coordinates.first)
@@ -111,8 +109,7 @@ attr_reader :cells, :columns, :rows
       end
     end
 
-    return true if (valid_right_coordinates == coordinates || valid_row_coordinates == coordinates)
-      false
+    valid_right_coordinates == coordinates || valid_row_coordinates == coordinates
   end
 
 end
