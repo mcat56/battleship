@@ -81,6 +81,8 @@ attr_reader :cells, :columns, :rows
         end
       return false
     end
+    across_or_down?(coordinates)
+  end
 
     across_or_down?(coordinates)
   end
