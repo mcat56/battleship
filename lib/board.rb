@@ -47,7 +47,7 @@ attr_reader :cells, :columns, :rows
     end
   end
 
-  def render(display=false)
+  def render(display = false)
     columns = 1..@columns
     rows    = 1..@rows
     
@@ -57,11 +57,9 @@ attr_reader :cells, :columns, :rows
 
     # render top row
     row = " " * (padding + 1)
-    columns.each do |col|
-      row += "#{col}".center(padding + number_string_length)
-    end
+    columns.each { |col| row += "#{col}".center(padding + number_string_length) }
 
-    row += "\n"
+    row << "\n"
 
     # Render each row
     rows.each do |rw|
@@ -69,9 +67,9 @@ attr_reader :cells, :columns, :rows
       row += letter.center(padding + 1)
       columns.each do |col|
         coordinate = letter + col.to_s
-        row += "#{@cells[coordinate].render(display)}".center(padding + number_string_length)
+        row << "#{@cells[coordinate].render(display)}".center(padding + number_string_length)
       end
-      row += "\n"
+      row << "\n"
     end
     row
   end
