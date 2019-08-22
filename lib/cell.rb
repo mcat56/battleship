@@ -9,8 +9,7 @@ class Cell
   end
 
   def ==(cell)
-    return true if @coordinate == cell.coordinate
-      false
+    @coordinate == cell.coordinate
   end
 
   def empty?
@@ -27,9 +26,7 @@ class Cell
 
   def fire_upon
     @fired_on = true
-    if @ship != nil
-      @ship.hit
-    end
+    @ship.hit if @ship != nil
   end
 
   def render(render_ship=false)
@@ -37,12 +34,10 @@ class Cell
       if empty?
         "M"
       else
-        return "X" if @ship.sunk?
-          "H"
+        @ship.sunk? ? "X" : "H"
       end
     else
-      return "S" if (!empty? && render_ship)
-        "."
+      (!empty? && render_ship) ? "S" : '.'
     end
   end
 end

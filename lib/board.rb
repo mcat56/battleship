@@ -24,12 +24,12 @@ attr_reader :cells, :columns, :rows
 
   def calculate_alphabetical_coordinate(num)
     if num == 0
-      return "Z"
+      "Z"
     elsif num <= 26
-      return (num + 64).chr
+      (num + 64).chr
     else
       divisible = (num % 26 == 0 ? 1 : 0)
-      return calculate_alphabetical_coordinate(num / 26 - divisible) + calculate_alphabetical_coordinate(num % 26)
+      calculate_alphabetical_coordinate(num / 26 - divisible) + calculate_alphabetical_coordinate(num % 26)
     end
 
   end
@@ -41,9 +41,7 @@ attr_reader :cells, :columns, :rows
 
   def place(ship, coordinates)
     if valid_placement?(ship, coordinates)
-      coordinates.each do |coordinate|
-        @cells[coordinate].place_ship(ship)
-      end
+      coordinates.each { |coordinate| @cells[coordinate].place_ship(ship) }
     end
   end
 
