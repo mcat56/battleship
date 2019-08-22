@@ -115,7 +115,7 @@ class BoardTest < MiniTest::Test
     @board.cells["A3"].fire_upon
     assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . . . . \nD . . . . \n", @board.render(true)
     @board.place(@submarine, ["C2", "D2"])
-    assert_equal "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n", @board.render
+    assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . . . . \nD . . . . \n", @board.render
     assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . S . . \nD . S . . \n", @board.render(true)
   end
 
