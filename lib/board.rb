@@ -28,10 +28,7 @@ attr_reader :cells, :columns, :rows
     elsif num <= 26
       return (num + 64).chr
     else
-      divisible = 0
-      if num % 26 == 0
-        divisible = 1
-      end
+      divisible = (num % 26 == 0 ? 1 : 0)
       return calculate_alphabetical_coordinate(num / 26 - divisible) + calculate_alphabetical_coordinate(num % 26)
     end
 
