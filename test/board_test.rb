@@ -88,6 +88,14 @@ class BoardTest < MiniTest::Test
     assert_equal true, @board.valid_placement?(@submarine, ["C3", "D3"])
   end
 
+  def test_valid_placement_coordinate_and_ship_length_must_match
+    assert_equal false, @board.valid_placement?(@cruiser, ["A1"])
+  end
+
+  def test_valid_placement_cannot_go_off_board
+    assert_equal false, @board.valid_placement?(@cruiser, ["E5", "E6", "E7"])
+  end
+
   def test_valid_placement_cannot_go_bottom_to_top
     assert_equal false, @board.valid_placement?(@cruiser, ["D4", "C4", "B4"])
   end

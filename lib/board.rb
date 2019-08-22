@@ -80,9 +80,9 @@ attr_reader :cells, :columns, :rows
        return false
     end
     if coordinates.any? do |coordinate|
-      valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
-    end
-      return false
+        valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
+        end
+        return false
     end
 
     keys                    = @cells.keys
