@@ -50,7 +50,7 @@ attr_reader :cells, :columns, :rows
   def render(display = false)
     columns = 1..@columns
     rows    = 1..@rows
-    
+
     number_string_length = @columns.to_s.length
     alphabetical_length  = calculate_alphabetical_coordinate(@rows).length
     padding              = [number_string_length, alphabetical_length].max
@@ -90,9 +90,9 @@ attr_reader :cells, :columns, :rows
     valid_right_coordinates = []
     valid_row_coordinates   = []
 
-    # Determine if the correct coordinates would move to the next row 
+    # Determine if the correct coordinates would move to the next row
     # i.e. if the first coordinate is at the end of the row and the
-    # ship length would extend over the right side of the  board, 
+    # ship length would extend over the right side of the  board,
     # then it cannot be placed
     coordinate_row        = coordinate_index / @columns
     next_row_index        = coordinate_row * @columns + @columns
@@ -102,9 +102,9 @@ attr_reader :cells, :columns, :rows
         valid_right_coordinates.push(keys[coordinate_index + i])
       end
     end
-    
+
     # Determine if the correct coordinate would move outside the bounds of keys
-    # i.e. if the ship would extend below the board, then the ship cannot 
+    # i.e. if the ship would extend below the board, then the ship cannot
     # be placed
     needed_index = coordinate_index + ((coordinates.length - 1) * @columns)
     if needed_index < keys.length
@@ -116,5 +116,5 @@ attr_reader :cells, :columns, :rows
     return true if (valid_right_coordinates == coordinates || valid_row_coordinates == coordinates)
       false
   end
-  
+
 end

@@ -20,7 +20,7 @@ class CellTest < Minitest::Test
 
   def test_cell_equality
     equal_cell = Cell.new("B4")
-    assert_equal true, @cell == equal_cell 
+    assert_equal true, @cell == equal_cell
   end
 
   def test_empty?
@@ -54,27 +54,36 @@ class CellTest < Minitest::Test
     assert @cell.fired_upon?
   end
 
-  def test_render
+  def test_render_for_empty_cell
     # No ship
     assert_equal ".", @cell.render
     @cell.fire_upon
     assert_equal "M", @cell.render
+ end
 
+  def test_render_for_cell_containing_ship
     # Has ship
     # Should render S if a ship exists and has not been hit/sunk
-    @cell = Cell.new("B4")
     @cell_2 = Cell.new("C3")
     @cell.place_ship(@cruiser)
     assert_equal ".", @cell_2.render(true)
     assert_equal ".", @cell.render
     assert_equal "S", @cell.render(true)
+  end
 
+   def test_render_for_hit_cell
     # Should always render H if ship is not sunk
+    @cell_2 = Cell.new("C3")
+    @cell.place_ship(@cruiser)
     @cell.fire_upon
     assert_equal "H", @cell.render
     assert_equal "H", @cell.render(true)
+  end
 
+  def test_render_when_ship_sunk
     # Should always render X if sunk
+    @cell.place_ship(@cruiser)
+    @cell.fire_upon
     @cruiser.hit
     @cruiser.hit
     assert_equal "X", @cell.render
