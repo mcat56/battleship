@@ -42,8 +42,8 @@ attr_reader :cells, :columns, :rows
   end
 
 
-  def place(ship,coordinates)
-    if valid_placement?
+  def place(ship, coordinates)
+    if valid_placement?(ship, coordinates)
       coordinates.each do |coordinate|
         @cells[coordinate].place_ship(ship)
       end
@@ -56,7 +56,7 @@ attr_reader :cells, :columns, :rows
     
     number_string_length = @columns.to_s.length
     alphabetical_length  = calculate_alphabetical_coordinate(@rows).length
-    padding = [number_string_length, alphabetical_length].max
+    padding              = [number_string_length, alphabetical_length].max
 
     # render top row
     row = " " * (padding + 1)
@@ -77,17 +77,6 @@ attr_reader :cells, :columns, :rows
       row += "\n"
     end
     row
-
-    # x = (1..@width).to_a
-    # y = ("A"..("A".ord+(@length-1)).chr).to_a
-    # string = "  "
-    # x.each do |num|
-    #   string << "#{num} "
-    # end
-    # y.each do |letter|
-    #   string << "\n#{letter}" + " ." * y.length + " "
-    # end
-    # string << "\n"
   end
 
 
@@ -100,28 +89,35 @@ attr_reader :cells, :columns, :rows
     end
       return false
     end
-    keys = @cells.keys
-    coordinate_index = keys.index(coordinates.first)
+
+    keys                    = @cells.keys
+    coordinate_index        = keys.index(coordinates.first)
     valid_right_coordinates = []
-    valid_row_coordinates = []
+    valid_row_coordinates   = []
 
-    max_right_index = coordinate_index + (coordinates.length - 1) # This is not entirely true, it will select different rows too.
-    max_row_index = coordinate_index + ((coordinates.length-1) * @columns)
-
-    if max_right_index <= keys.length
+    # Determine if the correct coordinates would move to the next row 
+    # i.e. if the first coordinate is at the end of the row, then there
+    # aren't any correct coordinates to the right. 
+    current_row           = coordinate_index / @columns
+    predicted_right_index = coordinate_index + (coordinates.length - 1)
+    max_right_index       = current_row * @columns + @columns
+    if predicted_right_index < max_right_index
       coordinates.length.times do |i|
         valid_right_coordinates.push(keys[coordinate_index + i])
       end
     end
-
-    if max_row_index <= keys.length
+    
+    # Determine if the correct coordinate would move outside the bounds 
+    # of keys.
+    max_row_index = coordinate_index + ((coordinates.length - 1) * @columns)
+    if max_row_index < keys.length
       coordinates.length.times do |i|
         valid_row_coordinates.push(keys[coordinate_index + (@columns * i)])
       end
     end
 
-    p valid_right_coordinates
-    p valid_row_coordinates
+    # p valid_right_coordinates
+    # p valid_row_coordinates
 
     if valid_right_coordinates == coordinates || valid_row_coordinates == coordinates
       return true
