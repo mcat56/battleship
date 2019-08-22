@@ -18,6 +18,11 @@ class CellTest < Minitest::Test
     assert_equal "B4", @cell.coordinate
   end
 
+  def test_cell_equality
+    equal_cell = Cell.new("B4")
+    assert_equal true, @cell == equal_cell 
+  end
+
   def test_empty?
     assert @cell.empty?
 
@@ -58,7 +63,9 @@ class CellTest < Minitest::Test
     # Has ship
     # Should render S if a ship exists and has not been hit/sunk
     @cell = Cell.new("B4")
+    @cell_2 = Cell.new("C3")
     @cell.place_ship(@cruiser)
+    assert_equal ".", @cell_2.render(true)
     assert_equal ".", @cell.render
     assert_equal "S", @cell.render(true)
 

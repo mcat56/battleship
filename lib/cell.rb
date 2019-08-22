@@ -1,11 +1,16 @@
 class Cell
-  attr_reader :coordinate, 
+  attr_reader :coordinate,
               :ship
 
-  def initialize(coordinate, ship=nil)
+  def initialize(coordinate, ship = nil)
     @coordinate  = coordinate
     @ship        = ship
     @fired_on    = false
+  end
+
+  def ==(cell)
+    return true if @coordinate == cell.coordinate
+      false
   end
 
   def empty?
@@ -37,7 +42,7 @@ class Cell
       end
     else
       return "S" if (!empty? && render_ship)
-        "." 
+        "."
     end
   end
 end
