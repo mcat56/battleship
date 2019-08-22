@@ -108,6 +108,18 @@ class BoardTest < MiniTest::Test
     assert_equal false, @board.valid_placement?(@cruiser, ["A3", "A2", "A1"])
   end
 
+  def test_bottom_to_top_across_or_down?
+    assert_equal false, @board.across_or_down?(["D4", "C4", "B4"])
+  end
+
+  def test_not_consecutive_across_or_down?
+    assert_equal false, @board.across_or_down?(["A1", "A3", "A2"])
+  end
+
+  def test_backwards_across_or_down?
+    assert_equal false, @board.across_or_down?(["A3", "A2", "A1"])
+  end
+
   def test_valid_placement_cannot_overlap_ships
     @board.cells["D2"].place_ship(@submarine)
     assert_equal false, @board.valid_placement?(@cruiser, ["B2", "C2", "D2"])
