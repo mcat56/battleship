@@ -81,15 +81,27 @@ class BoardTest < MiniTest::Test
     assert_equal false, @board.valid_coordinate?("E1")
   end
 
-  def test_valid_placement?
+  def test_valid_placement_is_true
     assert_equal true, @board.valid_placement?(@submarine, ["A1", "B1"])
     assert_equal true, @board.valid_placement?(@cruiser, ["A1", "A2", "A3"])
     assert_equal true, @board.valid_placement?(@submarine, ["D3", "D4"])
     assert_equal true, @board.valid_placement?(@submarine, ["C3", "D3"])
+  end
 
-    @board.cells["D2"].place_ship(@submarine)
+  def test_valid_placement_cannot_go_bottom_to_top
+    assert_equal false, @board.valid_placement?(@cruiser, ["D4", "C4", "B4"])
+  end
+
+  def test_valid_placement_must_be_consecutive
     assert_equal false, @board.valid_placement?(@cruiser, ["A1", "A3", "A2"])
+  end
+
+  def test_valid_placement_cannot_be_backwards
     assert_equal false, @board.valid_placement?(@cruiser, ["A3", "A2", "A1"])
+  end
+
+  def test_valid_placement_cannot_overlap_ships
+    @board.cells["D2"].place_ship(@submarine)
     assert_equal false, @board.valid_placement?(@cruiser, ["B2", "C2", "D2"])
   end
 
@@ -98,11 +110,13 @@ class BoardTest < MiniTest::Test
     assert_equal @cruiser, @board.cells["A1"].ship
     assert_equal @cruiser, @board.cells["A2"].ship
     assert_equal @cruiser, @board.cells["A3"].ship
+
     @board.place(@submarine,["A1", "A2"])
     assert_equal @cruiser, @board.cells["A1"].ship
     assert_equal @cruiser, @board.cells["A2"].ship
     assert_equal @cruiser, @board.cells["A3"].ship
   end
+
 
   def test_render
     @board.place(@cruiser, ["A1","A2","A3"])
@@ -116,6 +130,7 @@ class BoardTest < MiniTest::Test
     assert_equal "  1 2 3 4 \nA H H S . \nB . M . . \nC . . . . \nD . . . . \n", @board.render(true)
     @board.cells["A3"].fire_upon
     assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . . . . \nD . . . . \n", @board.render(true)
+    assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . . . . \nD . . . . \n", @board.render
     @board.place(@submarine, ["C2", "D2"])
     assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . . . . \nD . . . . \n", @board.render
     assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . S . . \nD . S . . \n", @board.render(true)
