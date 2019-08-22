@@ -95,9 +95,9 @@ attr_reader :cells, :columns, :rows
     # ship length would extend over the right side of the  board, 
     # then it cannot be placed
     coordinate_row        = coordinate_index / @columns
-    predicted_right_index = coordinate_index + (coordinates.length - 1)
-    max_right_index       = coordinate_row * @columns + @columns
-    if predicted_right_index < max_right_index
+    next_row_index        = coordinate_row * @columns + @columns
+    predicted_right_index = coordinate_index + coordinates.length
+    if predicted_right_index <= next_row_index
       coordinates.length.times do |i|
         valid_right_coordinates.push(keys[coordinate_index + i])
       end
@@ -106,7 +106,7 @@ attr_reader :cells, :columns, :rows
     # Determine if the correct coordinate would move outside the bounds of keys
     # i.e. if the ship would extend below the board, then the ship cannot 
     # be placed
-    max_row_index = coordinate_index + ((coordinates.length - 1) * @columns)
+    needed_index = coordinate_index + ((coordinates.length - 1) * @columns)
     if max_row_index < keys.length
       coordinates.length.times do |i|
         valid_row_coordinates.push(keys[coordinate_index + (@columns * i)])
