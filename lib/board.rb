@@ -57,14 +57,14 @@ attr_reader :cells, :columns, :rows
 
     # render top row
     row = " " * (padding + 1)
-    columns.each { |col| row += "#{col}".center(padding + number_string_length) }
+    columns.each { |col| row << "#{col}".center(padding + number_string_length) }
 
     row << "\n"
 
     # Render each row
     rows.each do |rw|
       letter = calculate_alphabetical_coordinate(rw)
-      row += letter.center(padding + 1)
+      row << letter.center(padding + 1)
       columns.each do |col|
         coordinate = letter + col.to_s
         row << "#{@cells[coordinate].render(display)}".center(padding + number_string_length)
