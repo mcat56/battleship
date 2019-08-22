@@ -52,7 +52,7 @@ class BoardTest < MiniTest::Test
   end
 
   def test_it_makes_a_board
-    @cells.each do |key,value|
+    @board.cells.each do |key,value|
       assert_equal true, value == @board.cells[key]
     end
   end
@@ -86,7 +86,6 @@ class BoardTest < MiniTest::Test
   end
 
   def test_place
-    @board.create_board(4, 4)
     @board.place(@cruiser,["A1","A2","A3"])
     assert_equal @cruiser, @board.cells["A1"].ship
     assert_equal @cruiser, @board.cells["A2"].ship
@@ -98,7 +97,6 @@ class BoardTest < MiniTest::Test
   end
 
   def test_render
-    @board.create_board(4, 4)
     @board.place(@cruiser,["A1","A2","A3"])
     assert_equal "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n", @board.render
     assert_equal "  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n", @board.render(true)
@@ -110,6 +108,9 @@ class BoardTest < MiniTest::Test
     assert_equal "  1 2 3 4 \nA H H S . \nB . M . . \nC . . . . \nD . . . . \n", @board.render(true)
     @board.cells["A3"].fire_upon
     assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . . . . \nD . . . . \n", @board.render(true)
+    @board.place(@submarine, ["C2", "D2"])
+    assert_equal "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n", @board.render
+    assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . S . . \nD . S . . \n", @board.render(true)
   end
 
 end

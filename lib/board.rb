@@ -38,7 +38,7 @@ attr_reader :cells, :columns, :rows
   end
 
   def valid_coordinate?(coordinate)
-   @cells.has_key?(coordinate)
+    @cells.has_key?(coordinate)
   end
 
   def place(ship, coordinates)
@@ -103,6 +103,10 @@ attr_reader :cells, :columns, :rows
     # if coordinates.any? { |coordinate| @cells[coordinate].empty? }
     #   return false
     # end
+
+
+
+
     if ship.length == coordinates.length
       length = ship.length - 1
       row = []
