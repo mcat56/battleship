@@ -88,21 +88,31 @@ attr_reader :cells, :length, :width
        return false
     end
     if coordinates.any? do |coordinate|
-      vaid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
+      valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
       end
       return false
     end
-    keys = @board.cells.keys
+    keys = @cells.keys
     x = keys.index(coordinates.first)
     right = keys[x+1]
     next_row = keys[x+@width]
       if coordinates[1] == right
 
       elsif coordinates[1] == next_row
-
+        hash_indices = []
+        coordinates.each do |coordinate|
+          hash_indices << keys.index(coordinate)
+        end
+        i = 0
+        hash_indices.each do |index|
+          if hash_indices[i+1]-hash_indices[i] != @width
+            return false
+          i += 1
+          end
+        end
       else
         false
-      end
+    end
   end
 
 
