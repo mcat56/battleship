@@ -82,7 +82,13 @@ class BoardTest < MiniTest::Test
   end
 
   def test_valid_placement?
-    assert_equal false, @board.valid_placement?(@submarine, ["A1", "B1"])
+    assert_equal true, @board.valid_placement?(@submarine, ["A1", "B1"])
+    assert_equal true, @board.valid_placement?(@cruiser, ["A1", "A2", "A3"])
+    assert_equal true, @board.valid_placement?(@submarine, ["D3", "D4"])
+    assert_equal true, @board.valid_placement?(@submarine, ["C3", "D3"])
+
+    assert_equal false, @board.valid_placement?(@cruiser, ["A1", "A3", "A2"])
+    assert_equal false, @board.valid_placement?(@cruiser, ["A3", "A2", "A1"])
   end
 
   def test_place
@@ -97,7 +103,7 @@ class BoardTest < MiniTest::Test
   end
 
   def test_render
-    @board.place(@cruiser,["A1","A2","A3"])
+    @board.place(@cruiser, ["A1","A2","A3"])
     assert_equal "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n", @board.render
     assert_equal "  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n", @board.render(true)
     @board.cells["A1"].fire_upon

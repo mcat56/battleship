@@ -12,7 +12,7 @@ attr_reader :cells, :columns, :rows
     numeric_range = 1..columns
     character_range = 1..rows
 
-    character_range.each do |w| 
+    character_range.each do |w|
       character_value = calculate_alphabetical_coordinate(w)
       numeric_range.each do |l|
         coordinate = character_value + l.to_s
@@ -41,18 +41,13 @@ attr_reader :cells, :columns, :rows
     @cells.has_key?(coordinate)
   end
 
-  def place(ship, coordinates)
-    valid = []
-    coordinates.each do |coordinate|
-      valid << @cells[coordinate].empty?
-    end
-      if valid.include?(false)
-        return
-      else
-        coordinates.each do |coordinate|
-          @cells[coordinate].place_ship(ship)
-        end
+
+  def place(ship,coordinates)
+    if valid_placement?
+      coordinates.each do |coordinate|
+        @cells[coordinate].place_ship(ship)
       end
+    end
   end
 
   def render(display=false)
@@ -96,36 +91,43 @@ attr_reader :cells, :columns, :rows
   end
 
 
-  def valid_placement?(ship, coordinates)
-    # if ship.length != coordinates.length
-    #   return false
-    # end
-    # if coordinates.any? { |coordinate| @cells[coordinate].empty? }
-    #   return false
-    # end
-
-
-
-
-    if ship.length == coordinates.length
-      length = ship.length - 1
-      row = []
-      column = []
-      coordinates.each do |coordinate|
-        letter = coordinate.split("").first
-        number = coordinate.split("").last.to_i
-        row << number
-        column << letter
-      end
-      letter = coordinates[0].split("").first
-      number = coordinates[0].split("").last.to_i
-      limit = number + length
-      last = (letter.ord + length).chr
-        if (  ((number..limit).to_a == row) && ([letter]*length == column)  )  || (   (([number]*length) == row)    &&    ((letter..last).to_a == column)   )
-          true
-        else
-          false
-        end
+  def valid_placement?(ship,coordinates)
+    if ship.length != coordinates.length
+       return false
     end
+    if coordinates.any? do |coordinate|
+      valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
+    end
+      return false
+    end
+    keys = @cells.keys
+    coordinate_index = keys.index(coordinates.first)
+    valid_right_coordinates = []
+    valid_row_coordinates = []
+
+    max_right_index = coordinate_index + (coordinates.length - 1) # This is not entirely true, it will select different rows too.
+    max_row_index = coordinate_index + ((coordinates.length-1) * @columns)
+
+    if max_right_index <= keys.length
+      coordinates.length.times do |i|
+        valid_right_coordinates.push(keys[coordinate_index + i])
+      end
+    end
+
+    if max_row_index <= keys.length
+      coordinates.length.times do |i|
+        valid_row_coordinates.push(keys[coordinate_index + (@columns * i)])
+      end
+    end
+
+    p valid_right_coordinates
+    p valid_row_coordinates
+
+    if valid_right_coordinates == coordinates || valid_row_coordinates == coordinates
+      return true
+    else
+      return false
+    end
+
   end
 end
