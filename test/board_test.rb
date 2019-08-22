@@ -53,7 +53,7 @@ class BoardTest < MiniTest::Test
 
   def test_it_makes_a_board
     @board.cells.each do |key,value|
-      assert_equal true, value == @board.cells[key]
+      assert_equal true, value == @cells[key]
     end
   end
 
