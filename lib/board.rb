@@ -107,7 +107,7 @@ attr_reader :cells, :columns, :rows
     # i.e. if the ship would extend below the board, then the ship cannot 
     # be placed
     needed_index = coordinate_index + ((coordinates.length - 1) * @columns)
-    if max_row_index < keys.length
+    if needed_index < keys.length
       coordinates.length.times do |i|
         valid_row_coordinates.push(keys[coordinate_index + (@columns * i)])
       end
