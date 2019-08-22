@@ -11,7 +11,6 @@ class Ship
 
   def sunk?
     @health <= 0
-    # return bool
   end
 
   def hit
