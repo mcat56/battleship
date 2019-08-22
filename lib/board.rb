@@ -90,8 +90,8 @@ attr_reader :cells, :columns, :rows
   def across_or_down?(coordinates)
     keys                    = @cells.keys
     coordinate_index        = keys.index(coordinates.first)
-    valid_across_coordinates = []
-    valid_down_coordinates   = []
+    valid_horizontal_coordinates = []
+    valid_vertical_coordinates  = []
 
     # Determine if the correct coordinates would move to the next row
     # i.e. if the first coordinate is at the end of the row and the
@@ -102,7 +102,7 @@ attr_reader :cells, :columns, :rows
     predicted_right_index = coordinate_index + coordinates.length
     if predicted_right_index <= next_row_index
       coordinates.length.times do |i|
-        valid_across_coordinates.push(keys[coordinate_index + i])
+        valid_horizontal_coordinates.push(keys[coordinate_index + i])
       end
     end
 
@@ -112,11 +112,11 @@ attr_reader :cells, :columns, :rows
     needed_index = coordinate_index + ((coordinates.length - 1) * @columns)
     if needed_index < keys.length
       coordinates.length.times do |i|
-        valid_down_coordinates.push(keys[coordinate_index + (@columns * i)])
+        valid_vertical_coordinates.push(keys[coordinate_index + (@columns * i)])
       end
     end
 
-    (valid_across_coordinates == coordinates || valid_down_coordinates == coordinates)
+    (valid_horizontal_coordinates == coordinates || valid_vertical_coordinates == coordinates)
 
     end
 
