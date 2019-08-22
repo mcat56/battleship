@@ -1,19 +1,16 @@
-require 'pry'
-
 class Board
-attr_reader :cells, :length, :width
+attr_reader :cells, :columns, :rows
 
-
-  def initialize(length=4, width=4)
-    @cells = {}
-    @length = length
-    @width  = width
-    create_board(@length, @width)
+  def initialize(columns=4, rows=4)
+    @cells   = {}
+    @columns = columns
+    @rows    = rows
+    create_board(@columns, @rows)
   end
 
-  def create_board(length, width)
-    numeric_range = 1..length
-    character_range = 1..width
+  def create_board(columns, rows)
+    numeric_range = 1..columns
+    character_range = 1..rows
 
     character_range.each do |w|
       character_value = calculate_alphabetical_coordinate(w)
@@ -31,55 +28,50 @@ attr_reader :cells, :length, :width
     elsif num <= 26
       return (num + 64).chr
     else
-      divisible = 0
-      if num % 26 == 0
-        divisible = 1
-      end
+      divisible = (num % 26 == 0 ? 1 : 0)
       return calculate_alphabetical_coordinate(num / 26 - divisible) + calculate_alphabetical_coordinate(num % 26)
     end
 
   end
 
   def valid_coordinate?(coordinate)
-   @cells.has_key?(coordinate)
+    @cells.has_key?(coordinate)
   end
 
 
-  def place(ship,coordinates)
-    if valid_placement?
+  def place(ship, coordinates)
+    if valid_placement?(ship, coordinates)
       coordinates.each do |coordinate|
         @cells[coordinate].place_ship(ship)
       end
     end
   end
 
-  def render(display=false)
-    x = (1..@width).to_a
-    y = ("A"..("A".ord+(@length-1)).chr).to_a
-    string = "  "
-    x.each do |num|
-      string << "#{num} "
-    end
-      if display == false
-        y.each do |letter|
-          string << "\n#{letter}" + " ." * y.length + " "
-        end
-        string << "\n"
-      else
-        render_true = []
-        @cells.each_value do |value|
-          render_true << value.render(true)
-        end
-        i = 0
-        y.each do |letter|
-          string << "\n#{letter} "
-          y.length.times do
-            string << "#{render_true[i]} "
-            i += 1
-          end
-        end
-        string << "\n"
+  def render(display = false)
+    columns = 1..@columns
+    rows    = 1..@rows
+
+    number_string_length = @columns.to_s.length
+    alphabetical_length  = calculate_alphabetical_coordinate(@rows).length
+    padding              = [number_string_length, alphabetical_length].max
+
+    # render top row
+    row = " " * (padding + 1)
+    columns.each { |col| row << "#{col}".center(padding + number_string_length) }
+
+    row << "\n"
+
+    # Render each row
+    rows.each do |rw|
+      letter = calculate_alphabetical_coordinate(rw)
+      row << letter.center(padding + 1)
+      columns.each do |col|
+        coordinate = letter + col.to_s
+        row << "#{@cells[coordinate].render(display)}".center(padding + number_string_length)
       end
+      row << "\n"
+    end
+    row
   end
 
 
@@ -89,33 +81,40 @@ attr_reader :cells, :length, :width
     end
     if coordinates.any? do |coordinate|
       valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
-      end
+    end
       return false
     end
-    keys = @cells.keys
-    x = keys.index(coordinates.first)
-    right = keys[x+1]
-    next_row = keys[x+@width]
-      if coordinates[1] == right
 
-      elsif coordinates[1] == next_row
-        hash_indices = []
-        coordinates.each do |coordinate|
-          hash_indices << keys.index(coordinate)
-        end
-        i = 0
-        hash_indices.each do |index|
-          if hash_indices[i+1]-hash_indices[i] != @width
-            return false
-          i += 1
-          end
-        end
-      else
-        false
+    keys                    = @cells.keys
+    coordinate_index        = keys.index(coordinates.first)
+    valid_right_coordinates = []
+    valid_row_coordinates   = []
+
+    # Determine if the correct coordinates would move to the next row
+    # i.e. if the first coordinate is at the end of the row and the
+    # ship length would extend over the right side of the  board,
+    # then it cannot be placed
+    coordinate_row        = coordinate_index / @columns
+    next_row_index        = coordinate_row * @columns + @columns
+    predicted_right_index = coordinate_index + coordinates.length
+    if predicted_right_index <= next_row_index
+      coordinates.length.times do |i|
+        valid_right_coordinates.push(keys[coordinate_index + i])
+      end
     end
+
+    # Determine if the correct coordinate would move outside the bounds of keys
+    # i.e. if the ship would extend below the board, then the ship cannot
+    # be placed
+    needed_index = coordinate_index + ((coordinates.length - 1) * @columns)
+    if needed_index < keys.length
+      coordinates.length.times do |i|
+        valid_row_coordinates.push(keys[coordinate_index + (@columns * i)])
+      end
+    end
+
+    return true if (valid_right_coordinates == coordinates || valid_row_coordinates == coordinates)
+      false
   end
-
-
-
 
 end
