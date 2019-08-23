@@ -24,12 +24,12 @@ attr_reader :cells, :columns, :rows
 
   def calculate_alphabetical_coordinate(num)
     if num == 0
-      "Z"
+      return "Z"
     elsif num <= 26
-      (num + 64).chr
+      return (num + 64).chr
     else
       divisible = (num % 26 == 0 ? 1 : 0)
-      calculate_alphabetical_coordinate(num / 26 - divisible) + calculate_alphabetical_coordinate(num % 26)
+      return calculate_alphabetical_coordinate(num / 26 - divisible) + calculate_alphabetical_coordinate(num % 26)
     end
 
   end
@@ -41,7 +41,9 @@ attr_reader :cells, :columns, :rows
 
   def place(ship, coordinates)
     if valid_placement?(ship, coordinates)
-      coordinates.each { |coordinate| @cells[coordinate].place_ship(ship) }
+      coordinates.each do |coordinate|
+        @cells[coordinate].place_ship(ship)
+      end
     end
   end
 
@@ -72,6 +74,7 @@ attr_reader :cells, :columns, :rows
     row
   end
 
+
   def valid_placement?(ship,coordinates)
     if ship.length != coordinates.length
        return false
@@ -79,20 +82,17 @@ attr_reader :cells, :columns, :rows
     if coordinates.any? do |coordinate|
         valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
         end
-      return false
+        return false
     end
     across_or_down?(coordinates)
   end
 
-    across_or_down?(coordinates)
-  end
-  
   def across_or_down?(coordinates)
-    keys             = @cells.keys
-    coordinate_index = keys.index(coordinates.first)
+    keys                    = @cells.keys
+    coordinate_index        = keys.index(coordinates.first)
     valid_horizontal_coordinates = []
-    valid_vertical_coordinates   = []
-  
+    valid_vertical_coordinates  = []
+
     # Determine if the correct coordinates would move to the next row
     # i.e. if the first coordinate is at the end of the row and the
     # ship length would extend over the right side of the  board,
@@ -105,7 +105,7 @@ attr_reader :cells, :columns, :rows
         valid_horizontal_coordinates.push(keys[coordinate_index + i])
       end
     end
-  
+
     # Determine if the correct coordinate would move outside the bounds of keys
     # i.e. if the ship would extend below the board, then the ship cannot
     # be placed
@@ -115,8 +115,10 @@ attr_reader :cells, :columns, :rows
         valid_vertical_coordinates.push(keys[coordinate_index + (@columns * i)])
       end
     end
-  
-    valid_horizontal_coordinates == coordinates || valid_vertical_coordinates == coordinates
+
+    (valid_horizontal_coordinates == coordinates || valid_vertical_coordinates == coordinates)
+
   end
+
 
 end
