@@ -1,12 +1,13 @@
 class Player
-attr_reader :cruiser, :submarine
+attr_reader :name
 
-  def initialize
-    @cruiser = Ship.new("Cruiser",3)
-    @submarine = Ship.new("Submarine", 2)
+  def initialize(name = "computer", is_human = false)
+    @name = name
+    @is_human = is_human
   end
 
-
-
+  def human?
+    @is_human
+  end
 
 end
