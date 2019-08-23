@@ -1,5 +1,5 @@
-require './minitest/autorun'
-require './minitest/pride'
+require 'minitest/autorun'
+require 'minitest/pride'
 require './lib/cell'
 require './lib/ship'
 require './lib/board'
@@ -8,7 +8,7 @@ require './lib/player'
 class PlayerTest < MiniTest::Test
 
   def setup
-    @player = Player.new("Mario")
+    @player = Player.new
     @computer = Player.new
   end
 
@@ -17,4 +17,4 @@ class PlayerTest < MiniTest::Test
     assert_instance_of Player, @computer
   end
 
-  def
+end
