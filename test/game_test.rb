@@ -18,13 +18,15 @@ class GameTest < MiniTest::Test
     @c_cruiser = Ship.new("Cruiser",3)
     @c_submarine = Ship.new("Submarine",2)
     @c_board = Board.new
-    @game = Game.new
-    @game_data = { player: {player: @player,
-      ships: [@p_cruiser, @p_submarine],
-      board: @p_board },
-      computer: {computer: @computer,
-        ships: [@c_cruiser, @c_submarine],
-        board: @c_board}
+    @game = Game.new(["player"])
+    @game_data = {player: {
+                    player: @player,
+                    ships: [@p_submarine, @p_cruiser],
+                    board: @p_board },
+                  computer: {
+                    player: @computer,
+                    ships: [@c_submarine, @c_cruiser],
+                    board: @c_board }
       }
     end
 
@@ -32,16 +34,16 @@ class GameTest < MiniTest::Test
     assert_instance_of Game, @game
   end
 
-  def test_game_data_is_a_hash
-    assert_instance_of Hash, @game.game_data
-  end
-
-  def test_ships_start_with_cruiser_and_submarine
-    assert_equal [@cruiser,@submarine], game.ships
-  end
-
   def test_generate_game_data
-    assert_equal @game_data, @game.game_data
+    @game_data.each do |key, player|
+      # require 'pry'; binding.pry
+      assert_equal player[:player], @game.game_data[key][:player]
+      # assert_equal player[:ships], @game.game_data[key][:ships]
+      player[:ships].each_index do |index|
+        assert_equal true, @game.game_data[key][:ships][index].eql?(player[:ships][index])
+      end
+      assert_equal player[:board], @game.game_data[key][:board]
+    end
   end
 
   def test_place_ships
@@ -143,4 +145,18 @@ class GameTest < MiniTest::Test
     assert_equal [submarine, cruiser], @game.generate_ships
     assert_equal [submarine, cruiser, destroyer, battleship, carrier], game_2.generate_ships
   end
+
+  def test_generate_players
+    player_mario = Player.new("Mario", true)
+    player_luigi = Player.new("Luigi", true)
+
+    assert_equal [@player, @computer], @game.generate_players
+
+    @game = Game.new(["Mario"], 4, 4)
+    assert_equal [player_mario, @computer], @game.generate_players
+
+    @game = Game.new(["Mario", "Luigi"], 4, 4)
+    assert_equal [player_mario, player_luigi], @game.generate_players
+  end
+
 end
