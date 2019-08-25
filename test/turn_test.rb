@@ -16,7 +16,7 @@ class TurnTest < MiniTest::Test
     @computer = Player.new
     @player_board = Board.new
     @computer_board = Board.new
-    game_hash = {
+    @game_data = {
       player1: {
         player: @player,
         ships: [@cruiser, @submarine],
@@ -29,7 +29,7 @@ class TurnTest < MiniTest::Test
       }
     }
 
-    @turn = Turn.new("A1",game_hash[:player1], game_hash[:player2])
+    @turn = Turn.new("A1", @game_data[:player1], @game_data[:player2])
   end
 
   def test_it_exists
@@ -38,10 +38,8 @@ class TurnTest < MiniTest::Test
 
   def test_it_has_attributes
     assert_equal "A1", @turn.coordinate
-    assert_equal game_hash[:player1], @turn.attacker_hash
-    assert_equal game_hash[:player2], @turn.defender_hash
+    assert_equal @game_data[:player1], @turn.attacker_data
+    assert_equal @game_data[:player2], @turn.defender_data
   end
-
-
 
 end
