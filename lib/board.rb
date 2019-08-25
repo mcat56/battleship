@@ -8,6 +8,10 @@ attr_reader :cells, :columns, :rows
     create_board(@columns, @rows)
   end
 
+  def ==(board)
+    @cells.keys == board.cells.keys
+  end
+
   def create_board(columns, rows)
     numeric_range = 1..columns
     character_range = 1..rows
@@ -75,7 +79,7 @@ attr_reader :cells, :columns, :rows
   end
 
 
-  def valid_placement?(ship,coordinates)
+  def valid_placement?(ship, coordinates)
     if ship.length != coordinates.length
        return false
     end
