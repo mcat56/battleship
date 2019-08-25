@@ -22,6 +22,7 @@ class PlayerTest < MiniTest::Test
 
   def test_default_computer_name
     assert_equal "computer", @computer.name
+  end
 
   def test_default_to_computer_controlled
     assert_equal false, @computer.human?
@@ -30,8 +31,5 @@ class PlayerTest < MiniTest::Test
   def test_can_be_human_controlled
     assert_equal true, @player.human?
   end
-
-  def test_it_has_a_name
-    assert_equal "Mario",
 
 end
