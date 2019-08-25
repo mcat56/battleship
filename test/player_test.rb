@@ -12,6 +12,13 @@ class PlayerTest < MiniTest::Test
     @computer = Player.new
   end
 
+  def test_equality
+    player_2 = Player.new("Mario", true)
+
+    assert_equal true, @player == player_2 
+    assert_equal false, player_2 == @computer
+  end
+
   def test_it_exists
     assert_instance_of Player, @player
   end
