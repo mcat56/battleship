@@ -9,7 +9,7 @@ class Ship
     @health = length
   end
   
-  def ==(ship)
+  def eql?(ship)
     @length == ship.length && @name == ship.name
   end 
 

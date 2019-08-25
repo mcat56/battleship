@@ -28,10 +28,10 @@ class ShipTest < Minitest::Test
 
   def test_equality
     cruiser = Ship.new("Cruiser", 3)
-    assert_equal true, @cruiser == cruiser
+    assert_equal true, @cruiser.eql?(cruiser)
 
     submarine = Ship.new("Submarine", 2)
-    assert_equal false, @cruiser == submarine
+    assert_equal false, @cruiser.eql?(submarine)
   end
 
   def test_sunk?
