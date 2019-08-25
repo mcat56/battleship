@@ -8,6 +8,10 @@ class Ship
     @length = length
     @health = length
   end
+  
+  def ==(ship)
+    @length == ship.length && @name == ship.name
+  end 
 
   def sunk?
     @health <= 0
