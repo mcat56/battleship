@@ -9,31 +9,26 @@ attr_reader :game_data
     { name: "Carrier",    length: 5 }
   ]
 
-  def initialize(players = 1, board_columns = 4, board_rows = 4)
+  def initialize(player_names, board_columns = 4, board_rows = 4)
     @game_data     = {}
-    @players       = players
+    @player_names  = player_names
     @board_columns = board_columns
     @board_rows    = board_rows
     @area          = @board_columns * @board_rows
     @attempts      = Hash.new(0)
     @turns         = [] 
-    # generate_game_data
+    generate_game_data
   end
 
-
   def generate_game_data
-    if @players == 1
-      player = Player.new("Player", true)
-      p_board = Board.new(@board_columns, @board_rows)
-    else
-      player_1 = Player.new("Player_1", true)
-      board_1 = Board.new(@board_columns, @board_rows)
-      player_2 = Player.new("Player_2", true)
-      board_2 = Board.new(@board_columns, @board_rows)
-      ships_to_add(@board_columns * @board_rows)
+    players = generate_players
+    # require 'pry'; binding.pry
+    players.each do |player|
+      @game_data[player.name.to_sym] = {}
+      @game_data[player.name.to_sym][:player] = player
+      @game_data[player.name.to_sym][:ships] = generate_ships
+      @game_data[player.name.to_sym][:board] = Board.new(@board_columns, @board_rows)
     end
-
-    game_data[:player][:ships] = generate_ships
   end
 
   def ships_to_add
@@ -51,6 +46,31 @@ attr_reader :game_data
       ships << ship
     end
     ships
+  end
+
+  def generate_players
+    players = []
+    if @player_names.length == 1
+      new_player = Player.new(@player_names.first, true)
+      computer = Player.new
+      players.push(new_player, computer)
+    else
+      @player_names.each do |player|
+        new_player = Player.new(player, true)
+        players.push(new_player)
+      end
+    end
+    players
+  end
+
+  def run
+    while true
+      #prompt for coordinates
+      #take turn
+      #if winner
+        #break
+    end
+    
   end
 
   # def generate_valid_placement_options
