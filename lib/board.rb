@@ -8,6 +8,10 @@ attr_reader :cells, :columns, :rows
     create_board(@columns, @rows)
   end
 
+  def ==(board)
+    @cells.keys == board.cells.keys
+  end
+
   def create_board(columns, rows)
     numeric_range = 1..columns
     character_range = 1..rows
@@ -41,7 +45,7 @@ attr_reader :cells, :columns, :rows
 
   def place(ship, coordinates)
     if valid_placement?(ship, coordinates)
-      coordinates.each { |coordinate| @cells[coordinate].place_ship(ship) }
+      coordinates.each {|coordinate| @cells[coordinate].place_ship(ship) }
     end
   end
 
@@ -72,27 +76,25 @@ attr_reader :cells, :columns, :rows
     row
   end
 
-  def valid_placement?(ship,coordinates)
+
+  def valid_placement?(ship, coordinates)
     if ship.length != coordinates.length
        return false
     end
     if coordinates.any? do |coordinate|
         valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
         end
-      return false
+        return false
     end
     across_or_down?(coordinates)
   end
 
-    across_or_down?(coordinates)
-  end
-  
   def across_or_down?(coordinates)
-    keys             = @cells.keys
-    coordinate_index = keys.index(coordinates.first)
+    keys                    = @cells.keys
+    coordinate_index        = keys.index(coordinates.first)
     valid_horizontal_coordinates = []
     valid_vertical_coordinates   = []
-  
+
     # Determine if the correct coordinates would move to the next row
     # i.e. if the first coordinate is at the end of the row and the
     # ship length would extend over the right side of the  board,
@@ -105,7 +107,7 @@ attr_reader :cells, :columns, :rows
         valid_horizontal_coordinates.push(keys[coordinate_index + i])
       end
     end
-  
+
     # Determine if the correct coordinate would move outside the bounds of keys
     # i.e. if the ship would extend below the board, then the ship cannot
     # be placed
@@ -115,8 +117,10 @@ attr_reader :cells, :columns, :rows
         valid_vertical_coordinates.push(keys[coordinate_index + (@columns * i)])
       end
     end
-  
-    valid_horizontal_coordinates == coordinates || valid_vertical_coordinates == coordinates
+
+    (valid_horizontal_coordinates == coordinates || valid_vertical_coordinates == coordinates)
+
   end
+
 
 end

@@ -26,6 +26,14 @@ class ShipTest < Minitest::Test
     assert_equal 2, @cruiser.health
   end
 
+  def test_equality
+    cruiser = Ship.new("Cruiser", 3)
+    assert_equal true, @cruiser.eql?(cruiser)
+
+    submarine = Ship.new("Submarine", 2)
+    assert_equal false, @cruiser.eql?(submarine)
+  end
+
   def test_sunk?
     # It should not be sunk until it's hit three times
     refute @cruiser.sunk?

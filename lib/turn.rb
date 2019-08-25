@@ -1,8 +1,10 @@
 class Turn
+  attr_reader :coordinate, :attacker_data, :defender_data
 
-  def initialize
-    @board1 = Board.new(4,4)
-    @board2 = Board.new(4,4)
+  def initialize(coordinate, attacker_data, defender_data)
+    @coordinate = coordinate
+    @attacker_data = attacker_data
+    @defender_data = defender_data
   end
 
-  
+end
