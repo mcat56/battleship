@@ -4,11 +4,7 @@ class Turn
   def initialize(coordinate, attacker_data, defender_data)
     @coordinate = coordinate
     @attacker_data = attacker_data
-    @defender_data = defender_data 
-    @player_keys = @player_board.cells.keys
+    @defender_data = defender_data
   end
-
-
-
 
 end
