@@ -1,5 +1,7 @@
 class Board
-attr_reader :cells, :columns, :rows
+attr_reader :cells,
+            :columns,
+            :rows
 
   def initialize(columns=4, rows=4)
     @cells   = {}
@@ -90,37 +92,37 @@ attr_reader :cells, :columns, :rows
   end
 
   def across_or_down?(coordinates)
-    generate_valid_coordinates(coordinates)
+    generate_valid_coordinates(coordinates, coordinates.length)
 
-    (@valid_horizontal_coordinates == coordinates || @valid_vertical_coordinates == coordinates)
+    (generate_valid_coordinates(coordinates,coordinates.length)[0] == coordinates || generate_valid_coordinates(coordinates,coordinates.length)[1] == coordinates)
 
   end
 
-  def generate_valid_coordinates(coordinates)
+  def generate_valid_coordinates(coordinates, length)
     keys                    = @cells.keys
     coordinate_index        = keys.index(coordinates.first)
-    @valid_horizontal_coordinates = []
-    @valid_vertical_coordinates   = []
-    @valid_coordinates = []
+    valid_horizontal_coordinates = []
+    valid_vertical_coordinates   = []
+    valid_coordinates = []
 
     coordinate_row        = coordinate_index / @columns
     next_row_index        = coordinate_row * @columns + @columns
-    predicted_right_index = coordinate_index + coordinates.length
+    predicted_right_index = coordinate_index + length
     if predicted_right_index <= next_row_index
-      coordinates.length.times do |i|
+      length.times do |i|
         valid_horizontal_coordinates.push(keys[coordinate_index + i])
       end
     end
 
-    needed_index = coordinate_index + ((coordinates.length - 1) * @columns)
+    needed_index = coordinate_index + ((length - 1) * @columns)
     if needed_index < keys.length
-      coordinates.length.times do |i|
+      length.times do |i|
         valid_vertical_coordinates.push(keys[coordinate_index + (@columns * i)])
       end
     end
 
-    @valid_coordinates << @valid_horizontal_coordinates << @valid_vertical_coordinates
-    @valid_coordinates
+    valid_coordinates << valid_horizontal_coordinates << valid_vertical_coordinates
+
 
   end
 

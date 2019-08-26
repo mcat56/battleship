@@ -49,22 +49,22 @@ class GameTest < MiniTest::Test
   def test_place_ships
     @p_board.place(@p_cruiser, ["A1", "A2", "A3"])
     @p_board.place(@p_submarine, ["C2", "D2"])
-    assert_nil @p_board.cells["B3"]
-    assert_nil @p_board.cells["A4"]
+    assert_nil @p_board.cells["B3"].ship
+    assert_nil @p_board.cells["A4"].ship
     assert_equal @p_board.cells["A1"].ship, @p_cruiser
     assert_equal @p_board.cells["A2"].ship, @p_cruiser
     assert_equal @p_board.cells["A3"].ship, @p_cruiser
     assert_equal @p_board.cells["C2"].ship, @p_submarine
     assert_equal @p_board.cells["D2"].ship, @p_submarine
 
-    @c_board.cells.each do |cell|
-      assert_nil cell.ship
+    @c_board.cells.keys.each do |key|
+      assert_nil @c_board.cells[key].ship
     end
 
     @c_board.place(@c_cruiser, ["A1", "A2", "A3"])
     @c_board.place(@c_submarine, ["C2", "D2"])
-    assert_nil @c_board.cells["B3"]
-    assert_nil @c_board.cells["A4"]
+    assert_nil @c_board.cells["B3"].ship
+    assert_nil @c_board.cells["A4"].ship
     assert_equal @c_board.cells["A1"].ship, @c_cruiser
     assert_equal @c_board.cells["A2"].ship, @c_cruiser
     assert_equal @c_board.cells["A3"].ship, @c_cruiser
