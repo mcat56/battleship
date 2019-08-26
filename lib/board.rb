@@ -90,15 +90,19 @@ attr_reader :cells, :columns, :rows
   end
 
   def across_or_down?(coordinates)
+    generate_valid_coordinates(coordinates)
+
+    (@valid_horizontal_coordinates == coordinates || @valid_vertical_coordinates == coordinates)
+
+  end
+
+  def generate_valid_coordinates(coordinates)
     keys                    = @cells.keys
     coordinate_index        = keys.index(coordinates.first)
-    valid_horizontal_coordinates = []
-    valid_vertical_coordinates   = []
+    @valid_horizontal_coordinates = []
+    @valid_vertical_coordinates   = []
+    @valid_coordinates = []
 
-    # Determine if the correct coordinates would move to the next row
-    # i.e. if the first coordinate is at the end of the row and the
-    # ship length would extend over the right side of the  board,
-    # then it cannot be placed
     coordinate_row        = coordinate_index / @columns
     next_row_index        = coordinate_row * @columns + @columns
     predicted_right_index = coordinate_index + coordinates.length
@@ -108,9 +112,6 @@ attr_reader :cells, :columns, :rows
       end
     end
 
-    # Determine if the correct coordinate would move outside the bounds of keys
-    # i.e. if the ship would extend below the board, then the ship cannot
-    # be placed
     needed_index = coordinate_index + ((coordinates.length - 1) * @columns)
     if needed_index < keys.length
       coordinates.length.times do |i|
@@ -118,9 +119,14 @@ attr_reader :cells, :columns, :rows
       end
     end
 
-    (valid_horizontal_coordinates == coordinates || valid_vertical_coordinates == coordinates)
+    @valid_coordinates << @valid_horizontal_coordinates << @valid_vertical_coordinates
+    @valid_coordinates
 
   end
+
+
+
+
 
 
 end

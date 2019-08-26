@@ -16,7 +16,7 @@ attr_reader :game_data
     @board_rows    = board_rows
     @area          = @board_columns * @board_rows
     @attempts      = Hash.new(0)
-    @turns         = [] 
+    @turns         = []
     generate_game_data
   end
 
@@ -63,162 +63,159 @@ attr_reader :game_data
     players
   end
 
-  def run
-    while true
-      #prompt for coordinates
-      #take turn
-      #if winner
-        #break
+
+
+  def place_ships
+    @game_data.each do |player, hash|
+      if hash[:player].is_human? == false
+        hash[:ships].each do |ship|
+          generate_valid_computer_placement(ship)
+          hash[:board].place(ship,@found)
+        end
+      else
+        puts """
+        You need to lay out your #{hash[:ships].length} ships.
+        """
+        hash[:ships].each do |ship|
+          puts "The #{ship.name} is #{ship.length} units long.\n"
+        end
+          puts "#{@player_board.render}"
+
+        hash[:ships].each do |ship|
+          puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
+          coordinates = gets.chomp
+          if hash[:board].valid_placment?(ship,coordinates)
+            hash[:board].place(ship,coordinates)
+          else
+            until hash[:board].valid_placment?(ship,coordinates)
+              puts "Those are invalid coordinates. Please try again."
+              coordinates = gets.chomp
+            end
+            hash[:board].place(ship,coordinates)
+          end
+        end
+      end
     end
-    
   end
 
-  # def generate_valid_placement_options
-  #   cruiser_coordinate = @computer_board.cells.keys.sample
-  #   @horizontal = @computer_board.generate_horizontal_coordinates(cruiser_coordinate)
-  #   @vertical = @computer_board.generate_vertical_coordinates(cruiser_coordinate)
-#   end
+  def generate_valid_computer_placement(ship)
+    start = @computer_board.cells.keys.sample
+    coordinate_options = @computer_board.generate_valid_coordinates(start)
+    @found = coordinate_options.find do |cooordinates|
+       @computer_board.valid_placement?(ship,coordinates)
+     end
+      if @found == nil
+        generate_valid_computer_placement(ship)
+      else
+        @found
+      end
+  end
 
-#   def computer_place_cruiser
-#     until @horizontal
-#     else
-#       generate_valid_placement_options
-#     end
-#   end
+  def take_turn_single_player
+      @game_data.each do |player,hash|
+        if hash[player].is_human?
+          keys = hash[player][:board].cells.keys
+          shot = hash[player][:board].cells.keys.sample
+          hash[player][:board].cells[shot].fire_upon
+          @turns << Turn.new(shot,"computer", @players[0])
+          keys.delete(shot)
+        else
+          puts "Enter the coordinate for your shot:"
+          @shot = gets.chomp
+            if @attempts[@shot] == 1
+              "You have already fired here. Select a new coordinate."
+            elsif @attempts[@shot] >= 1
+              return
+            elsif @game_data[:computer][:board].valid_coordinate?(@shot) == true
+              @game_data[:computer][:board].cells[@shot].fire_upon
+              @turns << Turn.new(@shot,players[0], "computer")
+              @attempts[@shot] += 1
+            else
+              until @game_data[:computer][:board].valid_coordinate?(@shot) == true
+                puts "Please enter a valid coordinate:"
+                @shot = gets.chomp
+              end
+              @game_data[:computer][:board].cells[@shot].fire_upon
+              @attempts[@shot] += 1
+              @turns << Turn.new(@shot,players[0], "computer")
+            end
+          end
+        end
+    end
 
-#   def computer_place_submarine
-#     submarine_coordinate = @computer_board.cells.keys.sample
+    def take_turn_multi_player
+      players = []
+      @game_data.each do |player,hash|
+        players << hash[:player]
+      end
+        attacker = players.sample
+        if players.length == 2
+          players.delete(attacker)
+          defender = players.sample
+        else
+          puts "Enter the player you wish to attack"
+          defender = gets.chomp
+          puts "#{attacker.name} enter the coordinate for your shot:"
+          @shot = gets.chomp
+            if @attempts[@shot] == 1
+              "You have already fired here. Select a new coordinate."
+            elsif @attempts[@shot] >= 1
+              return
+            elsif @game_data[  ?????    ].valid_coordinate?(@shot) == true
+              @game_data[:computer][:board].cells[@shot].fire_upon
+              @attempts[@shot] += 1
+            else
+              until @game_data[:computer][:board].valid_coordinate?(@shot) == true
+                puts "Please enter a valid coordinate:"
+                @shot = gets.chomp
+              end
+              @game_data[:computer][:board].cells[@shot].fire_upon
+              @attempts[@shot] += 1
+            end
+          end
+        end
+      end
+    end
 
-#      if @computer_board.valid_placement?(@computer.submarine,submarine_coordinates)
-#        @computer_board.place(@computer.submarine, submarine_coordinates)
-#     else
-#       computer_place_submarine
-#     end
-#   end
-
-#   def user_place_ships
-#     puts """
-#     I have laid out my ships on the grid.
-#     You now need to lay out your two ships.
-#     The Cruiser is two units long and the Submarine is three units long.
-#     #{@player_board.render}
-#     """
 
 
-#     puts "Enter the squares for the Cruiser (3 spaces):"
-#     cruiser_coordinates = gets.chomp
-#       until @player_board.valid_placement?(@player.cruiser, cruiser_coordinates) == true
-#         puts "Those are invalid coordinates. Please try again:"
-#         cruiser_coordinates = gets.chomp
-#       end
-#     @player_board.place(@player.cruiser, cruiser_coordinates)
-#     @board.render(true)
-#     puts "Enter the squares for the Submarine (2 spaces):"
-#     submarine_coordinates = gets.chomp
-#       until @player_board.valid_placement?(@player.submarine,submarine_coordinates) == true
-#         puts "Those are invalid coordinates. Please try again:"
-#         submarine = gets.chomp
-#       end
-#       @player_board.place(@player.submarine, submarine_coordinates)
-#   end
+      def display_the_boards
+        puts """
+        =============COMPUTER BOARD=============
+        #{@computer_board.render}
+        ==============PLAYER BOARD==============
+        #{@player_board.render(true)}
+        """
+      end
 
-#   def play
-#     @player.ships.any? do |ship|
-#       if ship.sunk? == true
-#         puts "I won!"
-#         welcome
-#       end
-#     end
-#       else
-#         @computer.ships.any? do |ship|
-#           if ship.sunk? == true
-#             puts "You won!"
-#             welcome
-#             end
-#           else
-#             turn = Turn.new(@player_board,@computer_board)
-#             turn.display_the_boards
-#             turn.prompt_user_for_shot
-#             turn.user_fires
-#             turn.user_result
-#             turn.computer_result
-#             turn.display_results
-#             turn.display_the_boards
-#             play
-#           end
-#       end
-#       def display_the_boards
-#         puts """
-#         =============COMPUTER BOARD=============
-#         #{@computer_board.render}
-#         ==============PLAYER BOARD==============
-#         #{@player_board.render(true)}
-#         """
-#       end
+      def user_result
+        if @attempts[@shot] > 1
+            @user_result = "You repeated a previous fire."
+        elsif @computer_board.cells[@shot].render == "M"
+          @user_result = "Your shot on #{@shot} was a miss."
+        elsif @computer_board.cells[@shot].render == "H"
+          @user_result = "Your shot on #{@shot} was a hit!"
+        elsif @computer_board.cells[@shot].render == "X"
+          @user_result = "Your shot on #{@shot} sunk the ship!"
+        end
+      end
 
-#       def get_coordinate
-#         puts "Enter the coordinate for your shot:"
-#         @shot = gets.chomp
-#         if valid_fire?(@shot)
-#           @shot = shot
-#         else
-#           "Please enter a valid coordinate:"
-#         end
-#       end
+      def computer_result
+        if @player_board.cells[@sample].render == "M"
+          @computer_result = "My shot on #{@shot} was a miss."
+        elsif @player_board.cells[@sample].render == "H"
+          @computer_result = "My shot on #{@shot} was a hit!"
+        elsif @player_board.cells[@sample].render == "X"
+          @computer_result = "My shot on #{@sample} sunk the ship!"
+        end
+      end
 
-#       def valid_fire?
-#         @player_board.valid_coordinate?(@shot) == true
-#       end
-
-#       def user_fires
-#         if @attempts[@shot] == 1
-#           "You have already fired here. Select a new coordinate."
-#         elsif attempts [coordinate] >= 1
-#           return
-#         else
-#           if valid_fire?
-#             @computer_board.cells[@shot].fire_upon
-#             @attempts[@shot] += 1
-#           else
-#             "Please enter a valid coordinate"
-#           end
-#         end
-#       end
-
-#       def computer_fire
-#         @sample = @player_keys.sample
-#         @player_board.cells[@sample].fire_upon
-#         @player_keys.delete(@sample)
-#       end
-
-#       def user_result
-#         if @attempts[@shot] > 1
-#             @user_result = "You repeated a previous fire."
-#         elsif @computer_board.cells[@shot].render == "M"
-#           @user_result = "Your shot on #{@shot} was a miss."
-#         elsif @computer_board.cells[@shot].render == "H"
-#           @user_result = "Your shot on #{@shot} was a hit!"
-#         elsif @computer_board.cells[@shot].render == "X"
-#           @user_result = "Your shot on #{@shot} sunk the ship!"
-#         end
-#       end
-
-#       def computer_result
-#         if @player_board.cells[@sample].render == "M"
-#           @computer_result = "My shot on #{@shot} was a miss."
-#         elsif @player_board.cells[@sample].render == "H"
-#           @computer_result = "My shot on #{@shot} was a hit!"
-#         elsif @player_board.cells[@sample].render == "X"
-#           @computer_result = "My shot on #{@sample} sunk the ship!"
-#         end
-#       end
-
-#       def display_results
-#         puts """
-#         #{@user_result}
-#         #{@computer_result}
-#         """
-#       end
+      def display_results
+        puts """
+        #{@user_result}
+        #{@computer_result}
+        """
+      end
 
 
 end
