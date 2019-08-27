@@ -37,7 +37,6 @@ attr_reader :cells,
       divisible = (num % 26 == 0 ? 1 : 0)
       calculate_alphabetical_coordinate(num / 26 - divisible) + calculate_alphabetical_coordinate(num % 26)
     end
-
   end
 
   def valid_coordinate?(coordinate)
@@ -78,15 +77,14 @@ attr_reader :cells,
     row
   end
 
-
   def valid_placement?(ship, coordinates)
     if ship.length != coordinates.length
        return false
     end
     if coordinates.any? do |coordinate|
-        valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
-        end
-        return false
+      valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
+      end
+      return false
     end
     across_or_down?(coordinates)
   end
@@ -95,7 +93,6 @@ attr_reader :cells,
     valid_coordinates = generate_valid_coordinates(coordinates, coordinates.length)
 
     (valid_coordinates.first == coordinates || valid_coordinates.last == coordinates)
-
   end
 
   def generate_valid_coordinates(coordinates, length)
