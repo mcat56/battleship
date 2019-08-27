@@ -184,7 +184,36 @@ class GameTest < MiniTest::Test
     @game.add_turn(turn1)
     assert_equal [turn1], @game.turns
     @game.add_turn(turn2)
-    assert_equal [turn1, turn2], @game.turns  
+    assert_equal [turn1, turn2], @game.turns
   end
+
+  def test_winner?
+    @game.check_for_winner
+    assert_equal false, @game.winner?
+    @game.game_data[:player][:board].place(@game.game_data[:player][:ships][1], ["A1", "A2", "A3"])
+    @game.game_data[:player][:ships][1].hit
+    @game.game_data[:player][:ships][1].hit
+    @game.game_data[:player][:ships][1].hit
+    @game.game_data[:player][:board].place(@game.game_data[:player][:ships][0], ["B1", "B2"])
+    @game.game_data[:player][:ships][0].hit
+    @game.game_data[:player][:ships][0].hit
+    @game.check_for_winner
+    assert_equal true, @game.winner?
+  end
+
+  def test_check_for_winner
+    @game.check_for_winner
+    assert_equal "", @game.winner
+    @game.game_data[:player][:board].place(@game.game_data[:player][:ships][1], ["A1", "A2", "A3"])
+    @game.game_data[:player][:ships][1].hit
+    @game.game_data[:player][:ships][1].hit
+    @game.game_data[:player][:ships][1].hit
+    @game.game_data[:player][:board].place(@game.game_data[:player][:ships][0], ["B1", "B2"])
+    @game.game_data[:player][:ships][0].hit
+    @game.game_data[:player][:ships][0].hit
+    @game.check_for_winner
+    assert_equal "computer", @game.winner
+  end
+
 
 end

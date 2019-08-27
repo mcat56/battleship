@@ -1,6 +1,6 @@
 require 'pry'
 class Game
-attr_reader :game_data, :turns
+attr_reader :game_data, :turns, :winner
 
   SHIPS = [
     { name: "Submarine",  length: 2 },
@@ -19,8 +19,9 @@ attr_reader :game_data, :turns
     @attempts      = Hash.new(0)
     @turns         = []
     @generated_ship_coordinates = nil
+    @winner = ""
     generate_game_data
-    
+
     @computer_shot_choices = @game_data[:player][:board].cells.keys
   end
 
@@ -65,6 +66,11 @@ attr_reader :game_data, :turns
     end
     players
   end
+
+  def display_boards
+    "=============COMPUTER BOARD=============\n#{@game_data[:computer][:board].render}==============PLAYER BOARD==============\n#{@game_data[:player][:board].render(true)}"""
+  end
+
 
   def place_ships
     @game_data[:computer][:ships].each do |ship|
@@ -113,12 +119,12 @@ attr_reader :game_data, :turns
     end
   end
 
-  def take_turn 
+  def take_turn
     puts display_boards
     puts "Enter the coordinate of your shot:"
     fired_on = false
     coordinate = gets.chomp
-    
+
     until fired_on == true
       if @game_data[:computer][:board].valid_coordinate?(coordinate)
         if @game_data[:computer][:board].cells[coordinate].fired_upon?
@@ -172,6 +178,23 @@ attr_reader :game_data, :turns
   def add_turn(turn)
     @turns.push(turn)
   end
+
+  def check_for_winner
+    if @game_data[:computer][:ships].all? { |ship| ship.sunk? }
+      @winner << "#{@game_data[:player][:player].name}"
+    elsif @game_data[:player][:ships].all? { |ship| ship.sunk? }
+      @winner << "#{@game_data[:computer][:player].name}"
+    end
+  end
+
+  def winner?
+    @winner != ""
+  end
+
+
+
+
+
 
 
   # def generate_valid_computer_placement(ship)
@@ -250,40 +273,6 @@ attr_reader :game_data, :turns
 
 
 
-
-      def display_boards
-        "=============COMPUTER BOARD=============\n#{@game_data[:computer][:board].render}==============PLAYER BOARD==============\n#{@game_data[:player][:board].render(true)}"""
-      end
-
-      def user_result
-        if @attempts[@shot] > 1
-            @user_result = "You repeated a previous fire."
-        elsif @computer_board.cells[@shot].render == "M"
-          @user_result = "Your shot on #{@shot} was a miss."
-        elsif @computer_board.cells[@shot].render == "H"
-          @user_result = "Your shot on #{@shot} was a hit!"
-        elsif @computer_board.cells[@shot].render == "X"
-          @user_result = "Your shot on #{@shot} sunk the ship!"
-        end
-      end
-
-
-      def computer_result
-        if @player_board.cells[@sample].render == "M"
-          @computer_result = "My shot on #{@shot} was a miss."
-        elsif @player_board.cells[@sample].render == "H"
-          @computer_result = "My shot on #{@shot} was a hit!"
-        elsif @player_board.cells[@sample].render == "X"
-          @computer_result = "My shot on #{@sample} sunk the ship!"
-        end
-      end
-
-      def display_results
-        puts """
-        #{@user_result}
-        #{@computer_result}
-        """
-      end
 
 
 end
