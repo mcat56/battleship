@@ -79,31 +79,44 @@ class GameTest < MiniTest::Test
   end
 
   def test_feedback_for_miss
-    turn1 = Turn.new("B2", @game_data[:player], @game_data[:computer])
-    assert_equal "Your shot on B2 was a miss.", @game.turn_feedback
-    turn2 = Turn.new("C3", @game_data[:computer], @game_data[:player])
-    assert_equal "My shot on C3 was a miss.", @game.turn_feedback
+    @game.game_data[:player][:board].place(@game.game_data[:player][:ships][1], ["A1", "A2", "A3"])
+    @game.game_data[:computer][:board].place(@game.game_data[:computer][:ships][0], ["A1", "A2"])
+    @game.game_data[:computer][:board].cells["D1"].fire_upon
+    @game.game_data[:player][:board].cells["D3"].fire_upon
+    turn1 = Turn.new("D1", @game.game_data[:player], @game.game_data[:computer])
+    turn2 = Turn.new("D3", @game.game_data[:computer], @game.game_data[:player])
+    @game.add_turn(turn1)
+    @game.add_turn(turn2)
+    assert_equal "Your shot on D1 was a miss.\nMy shot on D3 was a miss.", @game.feedback
   end
 
   def test_feedback_for_hit
-    @p_board.place(@p_cruiser, ["A1", "A2", "A3"])
-    turn1 = Turn.new("A1", @game_data[:computer], @game[:player])
-    assert_equal "My shot on A1 was a hit!", @game.feedback
+    @game.game_data[:player][:board].place(@game.game_data[:player][:ships][1], ["A1", "A2", "A3"])
+    @game.game_data[:computer][:board].place(@game.game_data[:computer][:ships][0], ["A1", "A2"])
+    @game.game_data[:computer][:board].cells["A1"].fire_upon
+    @game.game_data[:player][:board].cells["A1"].fire_upon
+    turn1 = Turn.new("A1", @game.game_data[:player], @game.game_data[:computer])
+    turn2 = Turn.new("A1", @game.game_data[:computer], @game.game_data[:player])
+    @game.add_turn(turn1)
+    @game.add_turn(turn2)
+    assert_equal "Your shot on A1 was a hit!\nMy shot on A1 was a hit!", @game.feedback
   end
 
   def test_feedback_for_sunk
-    @p_board.place(@p_cruiser, ["A1", "A2", "A3"])
-    turn1 = Turn.new("A1", @game_data[:computer], @game_data[:player])
-    turn2 = Turn.new("A2", @game_data[:computer], @game_data[:player])
-    turn3 = Turn.new("A3", @game_data[:computer], @game_data[:player])
-    assert_equal "My shot on A3 sunk the ship!", @game.feedback(turn_3)
-  end
-
-  def test_turn_feedback
-    @p_board.place(@p_cruiser, ["A1", "A2", "A3"])
-    turn1 = Turn.new("A1", @game_data[:computer], @game[:player])
-    turn2 = Turn.new("D3", @game_data[:player], @game_data[:computer])
-    assert_equal "My shot on A1 was a hit!\nYour shot on D3 was a miss.", @game.feedback(turn1,turn2)
+    @game.game_data[:player][:board].place(@game.game_data[:player][:ships][1], ["A1", "A2", "A3"])
+    @game.game_data[:player][:ships][1].hit
+    @game.game_data[:player][:ships][1].hit
+    @game.game_data[:player][:ships][1].hit
+    @game.game_data[:computer][:board].place(@game.game_data[:computer][:ships][0], ["A1", "A2"])
+    @game.game_data[:computer][:ships][0].hit
+    @game.game_data[:computer][:ships][0].hit
+    @game.game_data[:computer][:board].cells["A1"].fire_upon
+    @game.game_data[:player][:board].cells["A1"].fire_upon
+    turn1 = Turn.new("A1", @game.game_data[:player], @game.game_data[:computer])
+    turn2 = Turn.new("A1", @game.game_data[:computer], @game.game_data[:player])
+    @game.add_turn(turn1)
+    @game.add_turn(turn2)
+    assert_equal "Your shot on A1 sunk my Submarine!\nMy shot on A1 sunk your Cruiser!", @game.feedback
   end
 
   def test_game_over?
@@ -164,4 +177,14 @@ class GameTest < MiniTest::Test
 
     assert_equal board_string, @game.display_boards
   end
+
+  def test_adds_a_turn
+    turn1 = Turn.new("A1", @game_data[:player], @game_data[:computer])
+    turn2 = Turn.new("A1", @game_data[:computer], @game_data[:player])
+    @game.add_turn(turn1)
+    assert_equal [turn1], @game.turns
+    @game.add_turn(turn2)
+    assert_equal [turn1, turn2], @game.turns  
+  end
+
 end
