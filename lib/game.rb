@@ -89,22 +89,25 @@ attr_reader :game_data
     You now need to lay out your #{@game_data[:player][:ships].length} ships.
     The Cruiser is two units long and the Submarine is three units long.
     """
+
     @game_data[:player][:ships].each do |ship|
+      placed = false
+      puts "#{@game_data[:player][:board].render}"
       puts "The #{ship.name} is #{ship.length} units long.\n"
-    end
-    puts "#{@game_data[:player][:board].render}"
-    @game_data[:player][:ships].each do |ship|
       puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
       coordinates = gets.chomp.split
       if @game_data[:player][:board].valid_placement?(ship,coordinates)
         @game_data[:player][:board].place(ship,coordinates)
       else
-        until @game_data[:player][:board].valid_placement?(ship,coordinates) == true
-          puts "Those are invalid coordinates. Please try again."
-          coordinates = gets.chomp
-          @game_data[:player][:board].place(ship,coordinates)
+        until placed == true
+          if @game_data[:player][:board].valid_placement?(ship,coordinates)
+            @game_data[:player][:board].place(ship,coordinates)
+            placed = true
+          else
+            puts "Those are invalid coordinates. Please try again."
+            coordinates = gets.chomp.split
+          end
         end
-
       end
     end
 
