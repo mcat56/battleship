@@ -159,4 +159,9 @@ class GameTest < MiniTest::Test
     assert_equal [player_mario, player_luigi], @game.generate_players
   end
 
+  def test_display_the_boards
+    board_string = "=============COMPUTER BOARD=============\n#{@game_data[:computer][:board].render}==============PLAYER BOARD==============\n#{@game_data[:computer][:board].render(true)}"
+
+    assert_equal board_string, @game.display_boards
+  end
 end
