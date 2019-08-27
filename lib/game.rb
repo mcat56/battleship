@@ -1,6 +1,6 @@
 require 'pry'
 class Game
-attr_reader :game_data
+attr_reader :game_data, :turns
 
   SHIPS = [
     { name: "Submarine",  length: 2 },
@@ -21,7 +21,6 @@ attr_reader :game_data
     @generated_ship_coordinates = nil
     generate_game_data
     
-    place_ships
     @computer_shot_choices = @game_data[:player][:board].cells.keys
   end
 
@@ -128,7 +127,7 @@ attr_reader :game_data
           coordinate = gets.chomp
         else
           @game_data[:computer][:board].cells[coordinate].fire_upon
-          @turns << Turn.new(coordiante, @game_data[:player], @game_data[:computer])
+          @turns.add_turn(Turn.new(coordiante, @game_data[:player], @game_data[:computer]))
           fired_on = true
         end
       else
@@ -140,7 +139,7 @@ attr_reader :game_data
 
     coordinate = @computer_shot_choices.sample
     @game_data[:player][:board].cells[coordiante].fire_upon
-    @turns << Turn.new(coordiante, @game_data[:computer], @game_data[:player])
+    @turns.add_turn(Turn.new(coordiante, @game_data[:computer], @game_data[:player]))
     @computer_shot_choices.delete(coordiante)
 
     feedback
@@ -148,24 +147,30 @@ attr_reader :game_data
 
   def feedback
     result = @turns[-2].defender_data[:board].cells[@turns[-2].coordinate].render
+    feedback_string = ""
     if result == "M"
-      puts "Your shot on #{@turns[-2].coordinate} was a miss."
+      feedback_string << "Your shot on #{@turns[-2].coordinate} was a miss.\n"
     elsif result == "H"
-      puts "Your shot on #{@turns[-2].coordinate} was a hit!"
+      feedback_string << "Your shot on #{@turns[-2].coordinate} was a hit!\n"
     elsif result == "X"
       ship_name = @turns[-2].defender_data[:board].cells[@turns[-2].coordinate].ship.name
-      puts "Your shot on #{@turns[-2].coordinate} sunk my #{ship_name}!"
+      feedback_string << "Your shot on #{@turns[-2].coordinate} sunk my #{ship_name}!\n"
     end
 
     result = @turns[-1].defender_data[:board].cells[@turns[-1].coordinate].render
     if result == "M"
-      puts "My shot on #{@turns[-1].coordinate} was a miss."
+      feedback_string << "My shot on #{@turns[-1].coordinate} was a miss."
     elsif result == "H"
-      puts "My shot on #{@turns[-1].coordinate} was a hit!"
+      feedback_string << "My shot on #{@turns[-1].coordinate} was a hit!"
     elsif result == "X"
       ship_name = @turns[-1].defender_data[:board].cells[@turns[-1].coordinate].ship.name
-      puts "My shot on #{@turns[-1].coordinate} sunk your #{ship_name}!"
+      feedback_string << "My shot on #{@turns[-1].coordinate} sunk your #{ship_name}!"
     end
+    feedback_string
+  end
+
+  def add_turn(turn)
+    @turns.push(turn)
   end
 
 
