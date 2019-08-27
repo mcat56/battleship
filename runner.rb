@@ -23,11 +23,44 @@ while true
   choice = gets.chomp
   if choice == "p"
     game = Game.new(["player"])
-    puts game.display_boards
-    game.place_ships
+    game.place_computer_ships
+    puts """
+I have laid out my ships on the grid.
+You now need to lay out your #{game.game_data[:player][:ships].length} ships.
+The Cruiser is two units long and the Submarine is three units long.
+    """
+    game.game_data[:player][:ships].each do |ship|
+      placed = false
+      puts "#{game.game_data[:player][:board].render(true)}"
+      puts "The #{ship.name} is #{ship.length} units long.\n"
+      puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
+
+      until placed == true
+        coords = gets.chomp.split
+        placed = game.place_player_ships(ship, coords)
+        if placed == false
+          puts "Those are invalid coordinates. Please try again."
+        end
+      end
+    end
     winner = false
     while winner == false
-      game.take_turn
+      fired_on = false
+      puts "\n\n#{game.display_boards}"
+      until fired_on == true
+        puts "Enter the coordinate of your shot:"
+        coordinate = gets.chomp
+        player_turn = game.take_player_turn(coordinate)
+        if player_turn == "already fired"
+          puts "That coordinate has alread been fired upon"
+        elsif player_turn == true
+          fired_on = true
+        else
+          puts "Those are invalid coordinates. Please try again."
+        end
+      end
+      game.take_computer_turn
+      puts "\n\n\n#{game.feedback}\n\n"
       winner = game.winner?
     end
     puts winner_message(game.winner)
