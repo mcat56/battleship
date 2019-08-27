@@ -71,13 +71,12 @@ attr_reader :game_data
     @game_data[:computer][:ships].each do |ship|
       placed = false
       until placed == true
-      #binding.pry
-        start = @game_data[:computer][:board].cells.keys.sample
-        coordinate_options = @game_data[:computer][:board].generate_valid_coordinates([start],ship.length)
+        starting_coordinate = @game_data[:computer][:board].cells.keys.sample
+        coordinate_options = @game_data[:computer][:board].generate_valid_coordinates([starting_coordinate], ship.length)
         coordinate_options.keep_if do |coordinates|
           coordinates.length > 0
         end
-        if coordinate_options != [] && @game_data[:computer][:board].valid_placement?(ship,coordinate_options.sample)
+        if coordinate_options != [] && @game_data[:computer][:board].valid_placement?(ship, coordinate_options.sample)
           @game_data[:computer][:board].place(ship, coordinate_options.sample)
           placed = true
         end
@@ -96,12 +95,12 @@ attr_reader :game_data
       puts "The #{ship.name} is #{ship.length} units long.\n"
       puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
       coordinates = gets.chomp.split
-      if @game_data[:player][:board].valid_placement?(ship,coordinates)
-        @game_data[:player][:board].place(ship,coordinates)
+      if @game_data[:player][:board].valid_placement?(ship, coordinates)
+        @game_data[:player][:board].place(ship, coordinates)
       else
         until placed == true
-          if @game_data[:player][:board].valid_placement?(ship,coordinates)
-            @game_data[:player][:board].place(ship,coordinates)
+          if @game_data[:player][:board].valid_placement?(ship, coordinates)
+            @game_data[:player][:board].place(ship, coordinates)
             placed = true
           else
             puts "Those are invalid coordinates. Please try again."
@@ -190,13 +189,8 @@ attr_reader :game_data
 
 
 
-      def display_the_boards
-        puts """
-        =============COMPUTER BOARD=============
-        #{@computer_board.render}
-        ==============PLAYER BOARD==============
-        #{@player_board.render(true)}
-        """
+      def display_boards
+        "=============COMPUTER BOARD=============\n#{@game_data[:computer][:board].render}==============PLAYER BOARD==============\n#{@game_data[:computer][:board].render(true)}"""
       end
 
       def user_result
