@@ -18,7 +18,6 @@ attr_reader :game_data, :turns, :winner
     @area          = @board_columns * @board_rows
     @attempts      = Hash.new(0)
     @turns         = []
-    @generated_ship_coordinates = nil
     @winner = ""
     generate_game_data
 
