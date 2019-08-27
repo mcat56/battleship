@@ -90,7 +90,7 @@ attr_reader :game_data, :turns, :winner
         end
       end
     end
-    require 'pry'; binding.pry
+
     puts """
     I have laid out my ships on the grid.
     You now need to lay out your #{@game_data[:player][:ships].length} ships.
@@ -99,7 +99,7 @@ attr_reader :game_data, :turns, :winner
 
     @game_data[:player][:ships].each do |ship|
       placed = false
-      puts "#{@game_data[:player][:board].render}"
+      puts "#{@game_data[:player][:board].render(true)}"
       puts "The #{ship.name} is #{ship.length} units long.\n"
       puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
       coordinates = gets.chomp.split
@@ -133,7 +133,8 @@ attr_reader :game_data, :turns, :winner
           coordinate = gets.chomp
         else
           @game_data[:computer][:board].cells[coordinate].fire_upon
-          @turns.add_turn(Turn.new(coordiante, @game_data[:player], @game_data[:computer]))
+          turn = Turn.new(coordinate, @game_data[:player], @game_data[:computer])
+          add_turn(turn)
           fired_on = true
         end
       else
@@ -144,11 +145,13 @@ attr_reader :game_data, :turns, :winner
     end
 
     coordinate = @computer_shot_choices.sample
-    @game_data[:player][:board].cells[coordiante].fire_upon
-    @turns.add_turn(Turn.new(coordiante, @game_data[:computer], @game_data[:player]))
-    @computer_shot_choices.delete(coordiante)
+    @game_data[:player][:board].cells[coordinate].fire_upon
+    turn = Turn.new(coordinate, @game_data[:computer], @game_data[:player])
+    add_turn(turn)
+    @computer_shot_choices.delete(coordinate)
 
-    feedback
+    puts "\n\n\n#{feedback}\n\n"
+    check_for_winner
   end
 
   def feedback
