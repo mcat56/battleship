@@ -17,14 +17,16 @@ attr_reader :game_data
     @board_rows    = board_rows
     @area          = @board_columns * @board_rows
     @attempts      = Hash.new(0)
-    # @turns         = []
+    @turns         = []
     @generated_ship_coordinates = nil
     generate_game_data
+    
+    place_ships
+    @computer_shot_choices = @game_data[:player][:board].cells.keys
   end
 
   def generate_game_data
     players = generate_players
-    # require 'pry'; binding.pry
     players.each do |player|
       @game_data[player.name.to_sym] = {}
       @game_data[player.name.to_sym][:player] = player
@@ -65,24 +67,25 @@ attr_reader :game_data
     players
   end
 
-
-
   def place_ships
     @game_data[:computer][:ships].each do |ship|
       placed = false
       until placed == true
         starting_coordinate = @game_data[:computer][:board].cells.keys.sample
         coordinate_options = @game_data[:computer][:board].generate_valid_coordinates([starting_coordinate], ship.length)
+
         coordinate_options.keep_if do |coordinates|
           coordinates.length > 0
         end
-        if coordinate_options != [] && @game_data[:computer][:board].valid_placement?(ship, coordinate_options.sample)
-          @game_data[:computer][:board].place(ship, coordinate_options.sample)
+
+        coordinates = coordinate_options.sample
+        if coordinate_options.length > 0 && @game_data[:computer][:board].valid_placement?(ship, coordinates)
+          @game_data[:computer][:board].place(ship, coordinates)
           placed = true
         end
       end
     end
-
+    require 'pry'; binding.pry
     puts """
     I have laid out my ships on the grid.
     You now need to lay out your #{@game_data[:player][:ships].length} ships.
@@ -109,8 +112,62 @@ attr_reader :game_data
         end
       end
     end
-
   end
+
+  def take_turn 
+    puts display_boards
+    puts "Enter the coordinate of your shot:"
+    fired_on = false
+    coordinate = gets.chomp
+    
+    until fired_on == true
+      if @game_data[:computer][:board].valid_coordinate?(coordinate)
+        if @game_data[:computer][:board].cells[coordinate].fired_upon?
+          puts "That coordinate has alread been fired upon"
+          puts "Enter the coordinate of your shot:"
+          coordinate = gets.chomp
+        else
+          @game_data[:computer][:board].cells[coordinate].fire_upon
+          @turns << Turn.new(coordiante, @game_data[:player], @game_data[:computer])
+          fired_on = true
+        end
+      else
+        puts "Those are invalid coordinates. Please try again."
+        puts "Enter the coordinate of your shot:"
+        coordinate = gets.chomp
+      end
+    end
+
+    coordinate = @computer_shot_choices.sample
+    @game_data[:player][:board].cells[coordiante].fire_upon
+    @turns << Turn.new(coordiante, @game_data[:computer], @game_data[:player])
+    @computer_shot_choices.delete(coordiante)
+
+    feedback
+  end
+
+  def feedback
+    result = @turns[-2].defender_data[:board].cells[@turns[-2].coordinate].render
+    if result == "M"
+      puts "Your shot on #{@turns[-2].coordinate} was a miss."
+    elsif result == "H"
+      puts "Your shot on #{@turns[-2].coordinate} was a hit!"
+    elsif result == "X"
+      ship_name = @turns[-2].defender_data[:board].cells[@turns[-2].coordinate].ship.name
+      puts "Your shot on #{@turns[-2].coordinate} sunk my #{ship_name}!"
+    end
+
+    result = @turns[-1].defender_data[:board].cells[@turns[-1].coordinate].render
+    if result == "M"
+      puts "My shot on #{@turns[-1].coordinate} was a miss."
+    elsif result == "H"
+      puts "My shot on #{@turns[-1].coordinate} was a hit!"
+    elsif result == "X"
+      ship_name = @turns[-1].defender_data[:board].cells[@turns[-1].coordinate].ship.name
+      puts "My shot on #{@turns[-1].coordinate} sunk your #{ship_name}!"
+    end
+  end
+
 
   # def generate_valid_computer_placement(ship)
   #   start = @game_data[:computer][:board].cells.keys.sample
@@ -190,7 +247,7 @@ attr_reader :game_data
 
 
       def display_boards
-        "=============COMPUTER BOARD=============\n#{@game_data[:computer][:board].render}==============PLAYER BOARD==============\n#{@game_data[:computer][:board].render(true)}"""
+        "=============COMPUTER BOARD=============\n#{@game_data[:computer][:board].render}==============PLAYER BOARD==============\n#{@game_data[:player][:board].render(true)}"""
       end
 
       def user_result
