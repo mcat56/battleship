@@ -92,38 +92,50 @@ attr_reader :cells,
   end
 
   def across_or_down?(coordinates)
-    generate_valid_coordinates(coordinates, coordinates.length)
+    valid_coordinates = generate_valid_coordinates(coordinates, coordinates.length)
 
-    (generate_valid_coordinates(coordinates,coordinates.length)[0] == coordinates || generate_valid_coordinates(coordinates,coordinates.length)[1] == coordinates)
+    (valid_coordinates.first == coordinates || valid_coordinates.last == coordinates)
 
   end
 
   def generate_valid_coordinates(coordinates, length)
-    keys                    = @cells.keys
-    coordinate_index        = keys.index(coordinates.first)
-    valid_horizontal_coordinates = []
-    valid_vertical_coordinates   = []
-    valid_coordinates = []
-
-    coordinate_row        = coordinate_index / @columns
-    next_row_index        = coordinate_row * @columns + @columns
-    predicted_right_index = coordinate_index + length
-    if predicted_right_index <= next_row_index
-      length.times do |i|
-        valid_horizontal_coordinates.push(keys[coordinate_index + i])
-      end
-    end
-
-    needed_index = coordinate_index + ((length - 1) * @columns)
-    if needed_index < keys.length
-      length.times do |i|
-        valid_vertical_coordinates.push(keys[coordinate_index + (@columns * i)])
-      end
-    end
+    valid_horizontal_coordinates = generate_horizontal_coordinates(coordinates, length)
+    valid_vertical_coordinates   = generate_vertical_coordinates(coordinates, length)
+    valid_coordinates            = []
 
     valid_coordinates << valid_horizontal_coordinates << valid_vertical_coordinates
+  end
 
+  def generate_horizontal_coordinates(coordinates, length)
+    horizontal_coordinates = []
+    keys                   = @cells.keys
+    coordinate_index       = keys.index(coordinates.first)
+    coordinate_row         = coordinate_index / @columns
+    next_row_index         = coordinate_row * @columns + @columns
+    predicted_right_index  = coordinate_index + coordinates.length
 
+    if predicted_right_index <= next_row_index
+      coordinates.length.times do |i|
+        horizontal_coordinates.push(keys[coordinate_index + i])
+      end
+    end
+
+    horizontal_coordinates
+  end
+
+  def generate_vertical_coordinates(coordinates, length)
+    vertical_coordinates = []
+    keys                 = @cells.keys
+    coordinate_index     = keys.index(coordinates.first)
+    needed_index         = coordinate_index + ((coordinates.length - 1) * @columns)
+
+    if needed_index < keys.length
+      coordinates.length.times do |i|
+        vertical_coordinates.push(keys[coordinate_index + (@columns * i)])
+      end
+    end
+
+    vertical_coordinates
   end
 
 
