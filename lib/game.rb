@@ -99,7 +99,7 @@ attr_reader :game_data
       if @game_data[:player][:board].valid_placement?(ship,coordinates)
         @game_data[:player][:board].place(ship,coordinates)
       else
-        until hash[:board].valid_placement?(ship,coordinates)
+        until @game_data[:player][:board].valid_placement?(ship,coordinates) == true
           puts "Those are invalid coordinates. Please try again."
           coordinates = gets.chomp
           @game_data[:player][:board].place(ship,coordinates)
@@ -117,40 +117,40 @@ attr_reader :game_data
   #      @game_data[:computer][:board].valid_placement?(ship,coordinates)
   #    end
   #    found
-  # end
-
-  def take_turn
-      @game_data.each do |player,hash|
-        if hash[player].human?
-          keys = hash[player][:board].cells.keys
-          shot = hash[player][:board].cells.keys.sample
-          hash[player][:board].cells[shot].fire_upon
-          @turns << Turn.new(shot,"computer", @players[0])
-          keys.delete(shot)
-        else
-          puts "Enter the coordinate for your shot:"
-          @shot = gets.chomp
-            if @attempts[@shot] == 1
-              "You have already fired here. Select a new coordinate."
-            elsif @attempts[@shot] > 1
-              return
-            elsif @game_data[:computer][:board].valid_coordinate?(@shot) == true
-              @game_data[:computer][:board].cells[@shot].fire_upon
-              @turns << Turn.new(@shot,players[0], "computer")
-              @attempts[@shot] += 1
-            else
-              #check again for repeated coordiantes
-              until @game_data[:computer][:board].valid_coordinate?(@shot) == true
-                puts "Please enter a valid coordinate:"
-                @shot = gets.chomp
-              end
-              @game_data[:computer][:board].cells[@shot].fire_upon
-              @attempts[@shot] += 1
-              @turns << Turn.new(@shot,players[0], "computer")
-            end
-          end
-        end
-    end
+  # # end
+  #
+  # def take_turn
+  #     @game_data.each do |player,hash|
+  #       if hash[player].human?
+  #         keys = hash[player][:board].cells.keys
+  #         shot = hash[player][:board].cells.keys.sample
+  #         hash[player][:board].cells[shot].fire_upon
+  #         @turns << Turn.new(shot,"computer", @players[0])
+  #         keys.delete(shot)
+  #       else
+  #         puts "Enter the coordinate for your shot:"
+  #         @shot = gets.chomp
+  #           if @attempts[@shot] == 1
+  #             "You have already fired here. Select a new coordinate."
+  #           elsif @attempts[@shot] > 1
+  #             return
+  #           elsif @game_data[:computer][:board].valid_coordinate?(@shot) == true
+  #             @game_data[:computer][:board].cells[@shot].fire_upon
+  #             @turns << Turn.new(@shot,players[0], "computer")
+  #             @attempts[@shot] += 1
+  #           else
+  #             #check again for repeated coordiantes
+  #             until @game_data[:computer][:board].valid_coordinate?(@shot) == true
+  #               puts "Please enter a valid coordinate:"
+  #               @shot = gets.chomp
+  #             end
+  #             @game_data[:computer][:board].cells[@shot].fire_upon
+  #             @attempts[@shot] += 1
+  #             @turns << Turn.new(@shot,players[0], "computer")
+  #           end
+  #         end
+  #       end
+  #   end
 
     # def take_turn_multi_player
     #   players = []
