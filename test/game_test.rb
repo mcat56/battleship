@@ -143,9 +143,9 @@ class GameTest < MiniTest::Test
   end
 
   def test_ships_to_add
-    assert_equal 0, @game.ships_to_add(16)
-    assert_equal 3, @game.ships_to_add(100)
-    assert_equal 19, @game.ships_to_add(500)
+    assert_equal 0, @game.ships_to_add
+    game2 = Game.new(["player"],10,10)
+    assert_equal 3, game2.ships_to_add
   end
 
   def test_generate_ships
