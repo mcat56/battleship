@@ -1,5 +1,7 @@
 class Board
-attr_reader :cells, :columns, :rows
+attr_reader :cells,
+            :columns,
+            :rows
 
   def initialize(columns=4, rows=4)
     @cells   = {}
@@ -35,7 +37,6 @@ attr_reader :cells, :columns, :rows
       divisible = (num % 26 == 0 ? 1 : 0)
       calculate_alphabetical_coordinate(num / 26 - divisible) + calculate_alphabetical_coordinate(num % 26)
     end
-
   end
 
   def valid_coordinate?(coordinate)
@@ -45,7 +46,7 @@ attr_reader :cells, :columns, :rows
 
   def place(ship, coordinates)
     if valid_placement?(ship, coordinates)
-      coordinates.each {|coordinate| @cells[coordinate].place_ship(ship) }
+      coordinates.each { |coordinate| @cells[coordinate].place_ship(ship) }
     end
   end
 
@@ -76,51 +77,67 @@ attr_reader :cells, :columns, :rows
     row
   end
 
-
   def valid_placement?(ship, coordinates)
     if ship.length != coordinates.length
        return false
     end
     if coordinates.any? do |coordinate|
-        valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
-        end
-        return false
+      valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
+      end
+      return false
     end
     across_or_down?(coordinates)
   end
 
   def across_or_down?(coordinates)
-    keys                    = @cells.keys
-    coordinate_index        = keys.index(coordinates.first)
-    valid_horizontal_coordinates = []
-    valid_vertical_coordinates   = []
+    valid_coordinates = generate_valid_coordinates(coordinates, coordinates.length)
 
-    # Determine if the correct coordinates would move to the next row
-    # i.e. if the first coordinate is at the end of the row and the
-    # ship length would extend over the right side of the  board,
-    # then it cannot be placed
-    coordinate_row        = coordinate_index / @columns
-    next_row_index        = coordinate_row * @columns + @columns
-    predicted_right_index = coordinate_index + coordinates.length
-    if predicted_right_index <= next_row_index
-      coordinates.length.times do |i|
-        valid_horizontal_coordinates.push(keys[coordinate_index + i])
-      end
-    end
-
-    # Determine if the correct coordinate would move outside the bounds of keys
-    # i.e. if the ship would extend below the board, then the ship cannot
-    # be placed
-    needed_index = coordinate_index + ((coordinates.length - 1) * @columns)
-    if needed_index < keys.length
-      coordinates.length.times do |i|
-        valid_vertical_coordinates.push(keys[coordinate_index + (@columns * i)])
-      end
-    end
-
-    (valid_horizontal_coordinates == coordinates || valid_vertical_coordinates == coordinates)
-
+    (valid_coordinates.first == coordinates || valid_coordinates.last == coordinates)
   end
+
+  def generate_valid_coordinates(coordinates, length)
+    valid_horizontal_coordinates = generate_horizontal_coordinates(coordinates, length)
+    valid_vertical_coordinates   = generate_vertical_coordinates(coordinates, length)
+    valid_coordinates            = []
+
+    valid_coordinates << valid_horizontal_coordinates << valid_vertical_coordinates
+  end
+
+  def generate_horizontal_coordinates(coordinates, length)
+    horizontal_coordinates = []
+    keys                   = @cells.keys
+    coordinate_index       = keys.index(coordinates.first)
+    coordinate_row         = coordinate_index / @columns
+    next_row_index         = coordinate_row * @columns + @columns
+    predicted_right_index  = coordinate_index + length
+
+    if predicted_right_index <= next_row_index
+      length.times do |i|
+        horizontal_coordinates.push(keys[coordinate_index + i])
+      end
+    end
+
+    horizontal_coordinates
+  end
+
+  def generate_vertical_coordinates(coordinates, length)
+    vertical_coordinates = []
+    keys                 = @cells.keys
+    coordinate_index     = keys.index(coordinates.first)
+    needed_index         = coordinate_index + ((length - 1) * @columns)
+
+    if needed_index < keys.length
+      length.times do |i|
+        vertical_coordinates.push(keys[coordinate_index + (@columns * i)])
+      end
+    end
+
+    vertical_coordinates
+  end
+
+
+
+
 
 
 end

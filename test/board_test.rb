@@ -120,10 +120,43 @@ class BoardTest < MiniTest::Test
     assert_equal false, @board.across_or_down?(["A3", "A2", "A1"])
   end
 
+  def test_generate_valid_horizontal_coordinates
+    assert_equal ["A1", "A2", "A3"], @board.generate_horizontal_coordinates(["A1", "A2", "A3"], 3)
+    assert_equal ["A1", "A2"], @board.generate_horizontal_coordinates(["A1", "B2"], 2)
+    assert_equal ["D1", "D2", "D3", "D4"], @board.generate_horizontal_coordinates(["D1", "val", "doesn't", "matter"], 4)
+  end
+
+  def test_generate_invalid_horizontal_coordinates
+    assert_equal [], @board.generate_horizontal_coordinates(["A3", "A4", "A5"], 3)
+    assert_equal [], @board.generate_horizontal_coordinates(["D3", "B4", "B5"], 3)
+    assert_equal [], @board.generate_horizontal_coordinates(["C2", "value", "doesn't", "matter"], 4)
+  end
+
+  def test_generate_valid_vertical_coordinates
+    assert_equal ["A1", "B1", "C1"], @board.generate_vertical_coordinates(["A1", "B1", "C1"], 3)
+    assert_equal ["A2", "B2"], @board.generate_vertical_coordinates(["A2", "D2"], 2)
+    assert_equal ["A1", "B1", "C1", "D1"], @board.generate_vertical_coordinates(["A1", "val", "doesn't", "matter"], 4)
+  end
+
+  def test_generate_invalid_vertical_coordinates
+    assert_equal [], @board.generate_horizontal_coordinates(["A3", "A4", "A5"], 3)
+    assert_equal [], @board.generate_horizontal_coordinates(["D3", "B4", "B5"], 3)
+    assert_equal [], @board.generate_horizontal_coordinates(["C2", "value", "doesn't", "matter"], 4)
+  end
+
+  def test_generate_valid_coordinate_pairs
+    assert_equal [["A1", "A2", "A3"], ["A1", "B1", "C1"]], @board.generate_valid_coordinates(["A1", "A2", "A3"], 3)
+    assert_equal [["D1", "D2", "D3", "D4"], []], @board.generate_valid_coordinates(["D1", "val", "doesn't", "matter"], 4)
+    assert_equal [[], ["C4", "D4"]], @board.generate_valid_coordinates(["C4", "D2"], 2)
+    assert_equal [[], []], @board.generate_valid_coordinates(["C3", "A4", "A5"], 3)
+  end
+
   def test_valid_placement_cannot_overlap_ships
     @board.cells["D2"].place_ship(@submarine)
     assert_equal false, @board.valid_placement?(@cruiser, ["B2", "C2", "D2"])
   end
+
+
 
   def test_place
     @board.place(@cruiser,["A1", "A2", "A3"])
