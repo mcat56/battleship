@@ -109,10 +109,10 @@ attr_reader :cells,
     coordinate_index       = keys.index(coordinates.first)
     coordinate_row         = coordinate_index / @columns
     next_row_index         = coordinate_row * @columns + @columns
-    predicted_right_index  = coordinate_index + coordinates.length
+    predicted_right_index  = coordinate_index + length
 
     if predicted_right_index <= next_row_index
-      coordinates.length.times do |i|
+      length.times do |i|
         horizontal_coordinates.push(keys[coordinate_index + i])
       end
     end
@@ -124,10 +124,10 @@ attr_reader :cells,
     vertical_coordinates = []
     keys                 = @cells.keys
     coordinate_index     = keys.index(coordinates.first)
-    needed_index         = coordinate_index + ((coordinates.length - 1) * @columns)
+    needed_index         = coordinate_index + ((length - 1) * @columns)
 
     if needed_index < keys.length
-      coordinates.length.times do |i|
+      length.times do |i|
         vertical_coordinates.push(keys[coordinate_index + (@columns * i)])
       end
     end
