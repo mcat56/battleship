@@ -10,8 +10,10 @@ attr_reader :game_data, :turns, :winner
     { name: "Carrier",    length: 5 }
   ]
 
-  def initialize(player_names, board_columns = 4, board_rows = 4)
+  def initialize(player_names, board_columns = 4, board_rows = 4, custom_ships = false, ship_data = {})
     @game_data     = {}
+    @custom_ships = custom_ships
+    @ship_data = ship_data
     @player_names  = player_names
     @board_columns = board_columns
     @board_rows    = board_rows
@@ -19,14 +21,14 @@ attr_reader :game_data, :turns, :winner
     @attempts      = Hash.new(0)
     @turns         = []
     @winner = ""
+    @players = generate_players
     generate_game_data
 
     @computer_shot_choices = @game_data[:player][:board].cells.keys
   end
 
   def generate_game_data
-    players = generate_players
-    players.each do |player|
+    @players.each do |player|
       @game_data[player.name.to_sym] = {}
       @game_data[player.name.to_sym][:player] = player
       @game_data[player.name.to_sym][:ships] = generate_ships
@@ -39,17 +41,24 @@ attr_reader :game_data, :turns, :winner
   end
 
   def generate_ships
-    ships = []
     total_ships = ships_to_add + 2
-
-    total_ships.times do |index|
-      name = SHIPS[index % 5][:name]
-      length = SHIPS[index % 5][:length]
-      ship = Ship.new(name, length)
-      ships << ship
-    end
+    ships = []
+    if @custom_ships == false
+      total_ships.times do |index|
+          name = SHIPS[index % 5][:name]
+          length = SHIPS[index % 5][:length]
+          ship = Ship.new(name, length)
+          ships << ship
+        end
+    else
+      @ship_data.each do |name,length|
+        name = Ship.new(name,length.to_i)
+        ships << name
+        end
+      end
     ships
   end
+
 
   def generate_players
     players = []
@@ -90,6 +99,7 @@ attr_reader :game_data, :turns, :winner
       end
     end
   end
+
   def place_player_ships(ship,coordinates)
     if @game_data[:player][:board].valid_placement?(ship, coordinates)
       @game_data[:player][:board].place(ship, coordinates)
@@ -134,7 +144,6 @@ attr_reader :game_data, :turns, :winner
       ship_name = @turns[-2].defender_data[:board].cells[@turns[-2].coordinate].ship.name
       feedback_string << "Your shot on #{@turns[-2].coordinate} sunk my #{ship_name}!\n"
     end
-
     result = @turns[-1].defender_data[:board].cells[@turns[-1].coordinate].render
     if result == "M"
       feedback_string << "My shot on #{@turns[-1].coordinate} was a miss."
