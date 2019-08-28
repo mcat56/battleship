@@ -9,11 +9,62 @@ attr_reader :cells,
     @rows    = rows
     create_board(@columns, @rows)
   end
+  
+  def valid_coordinate?(coordinate)
+    @cells.has_key?(coordinate)
+  end
+  
+  def place(ship, coordinates)
+    if valid_placement?(ship, coordinates)
+      coordinates.each { |coordinate| @cells[coordinate].place_ship(ship) }
+    end
+  end
+  
+  def render(display = false)
+    columns = 1..@columns
+    rows    = 1..@rows
+    
+    number_string_length = @columns.to_s.length
+    alphabetical_length  = calculate_alphabetical_coordinate(@rows).length
+    padding              = [number_string_length, alphabetical_length].max
+    
+    # render top row
+    row = " " * (padding + 1)
+    columns.each { |col| row << "#{col}".center(padding + number_string_length) }
+    
+    row << "\n"
+    
+    # Render each row
+    rows.each do |rw|
+      row << construct_row_render(rw, columns, padding, display)
+      row << "\n"
+    end
+    row
+  end
+  
+  def valid_placement?(ship, coordinates)
+    return false if !same_length?(ship, coordinates)
+    return false if !all_valid_coordinates?(coordinates)
+    return false if !all_empty?(coordinates)
+    across_or_down?(coordinates)
+  end
+
+  def generate_valid_coordinates(coordinates, length)
+    valid_horizontal_coordinates = generate_horizontal_coordinates(coordinates, length)
+    valid_vertical_coordinates   = generate_vertical_coordinates(coordinates, length)
+    valid_coordinates            = []
+
+    valid_coordinates << valid_horizontal_coordinates << valid_vertical_coordinates
+  end
+
+  ###########
+  # Helpers #
+  ###########
 
   def ==(board)
     @cells.keys == board.cells.keys
   end
-
+  
   def create_board(columns, rows)
     numeric_range = 1..columns
     character_range = 1..rows
@@ -27,7 +78,7 @@ attr_reader :cells,
       end
     end
   end
-
+    
   def calculate_alphabetical_coordinate(num)
     if num == 0
       "Z"
@@ -38,69 +89,35 @@ attr_reader :cells,
       calculate_alphabetical_coordinate(num / 26 - divisible) + calculate_alphabetical_coordinate(num % 26)
     end
   end
-
-  def valid_coordinate?(coordinate)
-    @cells.has_key?(coordinate)
-  end
-
-
-  def place(ship, coordinates)
-    if valid_placement?(ship, coordinates)
-      coordinates.each { |coordinate| @cells[coordinate].place_ship(ship) }
-    end
-  end
-
-  def render(display = false)
-    columns = 1..@columns
-    rows    = 1..@rows
-
+  
+  def construct_row_render(row_number, columns, padding, display)
+    row = ""
     number_string_length = @columns.to_s.length
-    alphabetical_length  = calculate_alphabetical_coordinate(@rows).length
-    padding              = [number_string_length, alphabetical_length].max
-
-    # render top row
-    row = " " * (padding + 1)
-    columns.each { |col| row << "#{col}".center(padding + number_string_length) }
-
-    row << "\n"
-
-    # Render each row
-    rows.each do |rw|
-      letter = calculate_alphabetical_coordinate(rw)
-      row << letter.center(padding + 1)
-      columns.each do |col|
-        coordinate = letter + col.to_s
-        row << "#{@cells[coordinate].render(display)}".center(padding + number_string_length)
-      end
-      row << "\n"
+    letter = calculate_alphabetical_coordinate(row_number)
+    row << letter.center(padding + 1)
+    columns.each do |col|
+      coordinate = letter + col.to_s
+      row << "#{@cells[coordinate].render(display)}".center(padding + number_string_length)
     end
     row
   end
 
-  def valid_placement?(ship, coordinates)
-    if ship.length != coordinates.length
-       return false
-    end
-    if coordinates.any? do |coordinate|
-      valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
-      end
-      return false
-    end
-    across_or_down?(coordinates)
+  def same_length?(ship, coordinates)
+    ship.length == coordinates.length
   end
 
+  def all_valid_coordinates?(coordinates)
+    coordinates.all? { |coordinate| valid_coordinate?(coordinate) }
+  end
+
+  def all_empty?(coordinates)
+    coordinates.all? { |coordinate| @cells[coordinate].empty? }
+  end
+  
   def across_or_down?(coordinates)
     valid_coordinates = generate_valid_coordinates(coordinates, coordinates.length)
-
+    
     (valid_coordinates.first == coordinates || valid_coordinates.last == coordinates)
-  end
-
-  def generate_valid_coordinates(coordinates, length)
-    valid_horizontal_coordinates = generate_horizontal_coordinates(coordinates, length)
-    valid_vertical_coordinates   = generate_vertical_coordinates(coordinates, length)
-    valid_coordinates            = []
-
-    valid_coordinates << valid_horizontal_coordinates << valid_vertical_coordinates
   end
 
   def generate_horizontal_coordinates(coordinates, length)
@@ -134,10 +151,5 @@ attr_reader :cells,
 
     vertical_coordinates
   end
-
-
-
-
-
 
 end

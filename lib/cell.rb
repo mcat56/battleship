@@ -2,9 +2,9 @@ class Cell
   attr_reader :coordinate,
               :ship
 
-  def initialize(coordinate, ship = nil)
+  def initialize(coordinate)
     @coordinate  = coordinate
-    @ship        = ship
+    @ship        = nil
     @fired_on    = false
   end
 
@@ -30,7 +30,7 @@ class Cell
   end
 
   def render(render_ship=false)
-    if @fired_on
+    if fired_upon?
       if empty?
         "M"
       else

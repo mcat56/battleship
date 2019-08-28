@@ -18,21 +18,23 @@ class CellTest < Minitest::Test
     assert_equal "B4", @cell.coordinate
   end
 
+  def test_ship_starts_empty
+    assert_nil @cell.ship
+  end
+
   def test_cell_equality
     equal_cell = Cell.new("B4")
     assert_equal true, @cell == equal_cell
   end
 
   def test_empty?
-    assert @cell.empty?
+    assert_equal true, @cell.empty?
 
     @cell.place_ship(@cruiser)
-    refute @cell.empty?
+    assert_equal false,  @cell.empty?
   end
 
-  def test_place_ship
-    assert_nil @cell.ship
-
+  def test_can_place_ship
     @cell.place_ship(@cruiser)
     assert_equal @cruiser, @cell.ship
   end
@@ -40,7 +42,7 @@ class CellTest < Minitest::Test
   def test_fired_upon?
     # Cell should not be fired upon when initialized
     # Should return true after the cell has been fired upon
-    refute @cell.fired_upon?
+    assert_equal false, @cell.fired_upon?
     @cell.fire_upon
     assert @cell.fired_upon?
   end
@@ -49,21 +51,19 @@ class CellTest < Minitest::Test
     refute @cell.fired_upon?
     @cell.fire_upon
     assert @cell.fired_upon?
+
     # It should not change the state of fired_upon? or ship health when fire_upon is called again
     @cell.fire_upon
     assert @cell.fired_upon?
   end
 
   def test_render_for_empty_cell
-    # No ship
     assert_equal ".", @cell.render
     @cell.fire_upon
     assert_equal "M", @cell.render
  end
 
   def test_render_for_cell_containing_ship
-    # Has ship
-    # Should render S if a ship exists and has not been hit/sunk
     @cell_2 = Cell.new("C3")
     @cell.place_ship(@cruiser)
     assert_equal ".", @cell_2.render(true)
@@ -72,7 +72,6 @@ class CellTest < Minitest::Test
   end
 
    def test_render_for_hit_cell
-    # Should always render H if ship is not sunk
     @cell_2 = Cell.new("C3")
     @cell.place_ship(@cruiser)
     @cell.fire_upon
@@ -81,7 +80,6 @@ class CellTest < Minitest::Test
   end
 
   def test_render_when_ship_sunk
-    # Should always render X if sunk
     @cell.place_ship(@cruiser)
     @cell.fire_upon
     @cruiser.hit

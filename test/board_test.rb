@@ -71,21 +71,25 @@ class BoardTest < MiniTest::Test
     assert_equal "AAAB", @board.calculate_alphabetical_coordinate(18280)
   end
 
-
-  def test_it_has_cells_hash
-    assert_instance_of Hash, @board.cells
-  end
-
-  def test_valid_coordinate?
+  def test_coordinate_is_valid
     assert_equal true, @board.valid_coordinate?("A1")
+  end
+  
+  def test_coordinate_is_invalid
     assert_equal false, @board.valid_coordinate?("E1")
   end
 
-  def test_valid_placement_is_true
+  def test_valid_placement
     assert_equal true, @board.valid_placement?(@submarine, ["A1", "B1"])
     assert_equal true, @board.valid_placement?(@cruiser, ["A1", "A2", "A3"])
     assert_equal true, @board.valid_placement?(@submarine, ["D3", "D4"])
     assert_equal true, @board.valid_placement?(@submarine, ["C3", "D3"])
+  end
+
+  def test_invalid_placement
+    assert_equal false, @board.valid_placement?(@submarine, ["A1", "D1"])
+    assert_equal false, @board.valid_placement?(@submarine, ["A1", "A2", "A3"])
+    assert_equal false, @board.valid_placement?(@submarine, ["A3", "D4"])
   end
 
   def test_valid_placement_coordinate_and_ship_length_must_match
@@ -156,8 +160,6 @@ class BoardTest < MiniTest::Test
     assert_equal false, @board.valid_placement?(@cruiser, ["B2", "C2", "D2"])
   end
 
-
-
   def test_place
     @board.place(@cruiser,["A1", "A2", "A3"])
     assert_equal @cruiser, @board.cells["A1"].ship
@@ -169,7 +171,6 @@ class BoardTest < MiniTest::Test
     assert_equal @cruiser, @board.cells["A2"].ship
     assert_equal @cruiser, @board.cells["A3"].ship
   end
-
 
   def test_render
     @board.place(@cruiser, ["A1","A2","A3"])
@@ -187,6 +188,47 @@ class BoardTest < MiniTest::Test
     @board.place(@submarine, ["C2", "D2"])
     assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . . . . \nD . . . . \n", @board.render
     assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . S . . \nD . S . . \n", @board.render(true)
+  end
+
+  def test_constructs_a_rendered_row
+    columns = 1..@board.columns
+    @board.cells["C3"].place_ship(@cruiser)
+    assert_equal "A . . . . ", @board.construct_row_render(1, columns, 1, false)
+    assert_equal "B . . . . ", @board.construct_row_render(2, columns, 1, false)
+    assert_equal "C . . S . ", @board.construct_row_render(3, columns, 1, true)
+  end
+
+  def test_ship_and_coordinates_are_same_length
+    assert_equal true, @board.same_length?(@cruiser, ["A1", "A2", "A3"])
+  end
+
+  def test_ship_and_coordinates_are_not_same_length
+    assert_equal false, @board.same_length?(@cruiser, ["A1", "A2"])
+  end
+
+  def test_all_coordinates_exist
+    assert_equal true, @board.all_valid_coordinates?(["A1", "A2", "A3"])
+  end
+
+  def test_at_least_one_coordinate_does_not_exist
+    assert_equal false, @board.all_valid_coordinates?(["D10", "A4"])
+  end
+
+  def test_all_cells_empty
+    assert_equal true, @board.all_empty?(["A1", "A2", "A3"])
+  end
+
+  def test_at_least_one_cell_is_occupied
+    @board.cells["A1"].place_ship(@cruiser)
+    assert_equal false, @board.all_empty?(["A1", "A2", "A3"])
+  end
+
+  def test_custom_board_size
+    board = Board.new(10, 52)
+    board_2 = Board.new(52, 10)
+
+    assert_equal 520, board.cells.length
+    assert_equal 520, board_2.cells.length
   end
 
 end
