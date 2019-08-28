@@ -30,10 +30,28 @@ while true
         game = Game.new(["player"], 4, 4, false)
       end
     else
-      puts "Please enter a number of columns for the boards"
+      puts "Please enter a number of columns for the boards (minimum of 4)"
       columns = gets.chomp.to_i
-      puts "Please enter a number of rows for the boards"
+      too_small = true
+      until too_small == false
+        if columns < 4
+          puts "That is too small, please try again."
+          columns = gets.chomp.to_i
+        else
+          too_small = false
+        end
+      end
+      puts "Please enter a number of rows for the boards (minimum of 4)"
       rows = gets.chomp.to_i
+      too_small = true
+      until too_small == false
+        if rows < 4
+          puts "That is too small, please try again."
+          rows = gets.chomp.to_i
+        else
+          too_small = false
+        end
+      end
       ship_count = (((columns * rows) - 16) * 0.04).to_i + 2
       puts "Would you like to customize your ships? (Yes or No)"
       custom = gets.chomp.downcase
