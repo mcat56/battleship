@@ -99,7 +99,7 @@ attr_reader :game_data, :turns, :winner
     end
   end
 
-  def place_player_ships(ship,coordinates)
+  def place_player_ships(ship, coordinates)
     if @game_data[:player][:board].valid_placement?(ship, coordinates)
       @game_data[:player][:board].place(ship, coordinates)
       return true
