@@ -71,7 +71,6 @@ class BoardTest < MiniTest::Test
     assert_equal "AAAB", @board.calculate_alphabetical_coordinate(18280)
   end
 
-
   def test_it_has_cells_hash
     assert_instance_of Hash, @board.cells
   end
@@ -156,8 +155,6 @@ class BoardTest < MiniTest::Test
     assert_equal false, @board.valid_placement?(@cruiser, ["B2", "C2", "D2"])
   end
 
-
-
   def test_place
     @board.place(@cruiser,["A1", "A2", "A3"])
     assert_equal @cruiser, @board.cells["A1"].ship
@@ -169,7 +166,6 @@ class BoardTest < MiniTest::Test
     assert_equal @cruiser, @board.cells["A2"].ship
     assert_equal @cruiser, @board.cells["A3"].ship
   end
-
 
   def test_render
     @board.place(@cruiser, ["A1","A2","A3"])

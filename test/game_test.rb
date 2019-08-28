@@ -144,7 +144,7 @@ class GameTest < MiniTest::Test
 
   def test_ships_to_add
     assert_equal 0, @game.ships_to_add
-    game2 = Game.new(["player"],10,10)
+    game2 = Game.new(["player"], 10, 10)
     assert_equal 3, game2.ships_to_add
   end
 
@@ -214,6 +214,5 @@ class GameTest < MiniTest::Test
     @game.check_for_winner
     assert_equal "computer", @game.winner
   end
-
 
 end
