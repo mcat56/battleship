@@ -134,28 +134,27 @@ attr_reader :game_data, :turns, :winner
 
       check_for_winner
     else
-      if @turns.length >= 3
-        computer_shot_choices =  @game_data[:player][:board].cells.keys
-        if @game_data[:computer][:board].cells((@turns[-2].coordinate)).render(true) == "H"
-          computer_shot_choices.keep_if do |key|
-            @game_data[:player][:board].generate_horizontal_coordinates(key, 3).include?(key) || @game_data[:player][:board].generate_vertical_coordinates(key, 3).include?(key)
-          end
-          coordinate = computer_shot_choices.sample
-          @game_data[:player][:board].cells[coordinate].fire_upon
-          turn = Turn.new(coordinate, @game_data[:computer], @game_data[:player])
-          add_turn(turn)
-          @computer_shot_choices.delete(coordinate)
-          check_for_winner
-        else
-          coordinate = @computer_shot_choices.sample
-          @game_data[:player][:board].cells[coordinate].fire_upon
-          turn = Turn.new(coordinate, @game_data[:computer], @game_data[:player])
-          add_turn(turn)
-          @computer_shot_choices.delete(coordinate)
+      computer_shot_choices =  @game_data[:player][:board].cells.keys
 
-          check_for_winner
+      if @game_data[:computer][:board].cells[@turns[-2].coordinate].render == "H"
+        computer_shot_choices.keep_if do |key|
+          @game_data[:player][:board].generate_horizontal_coordinates(key, 3).include?(key) || @game_data[:player][:board].generate_vertical_coordinates(key, 3).include?(key)
         end
-      end
+        coordinate = computer_shot_choices.sample
+        @game_data[:player][:board].cells[coordinate].fire_upon
+        turn = Turn.new(coordinate, @game_data[:computer], @game_data[:player])
+        add_turn(turn)
+        @computer_shot_choices.delete(coordinate)
+        check_for_winner
+      else
+        coordinate = @computer_shot_choices.sample
+        @game_data[:player][:board].cells[coordinate].fire_upon
+        turn = Turn.new(coordinate, @game_data[:computer], @game_data[:player])
+        add_turn(turn)
+        @computer_shot_choices.delete(coordinate)
+
+        check_for_winner
+      end 
     end
   end
 

@@ -100,34 +100,34 @@ while true
         end
       end
     end
-    game.place_computer_ships
-    puts """
+  game.place_computer_ships
+  puts """
 I have laid out my ships on the grid.
 You now need to lay out your #{game.game_data[:player][:ships].length} ships.
 """
-     game.game_data[:player][:ships].each do |ship|
-       puts "The #{ship.name} is #{ship.length} units long.\n"
-     end
-     game.game_data[:player][:ships].each do |ship|
-        placed = false
-        puts "#{game.game_data[:player][:board].render(true)}"
-        puts "The #{ship.name} is #{ship.length} units long.\n"
-        puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
+   game.game_data[:player][:ships].each do |ship|
+     puts "The #{ship.name} is #{ship.length} units long.\n"
+   end
+   game.game_data[:player][:ships].each do |ship|
+      placed = false
+      puts "#{game.game_data[:player][:board].render(true)}"
+      puts "The #{ship.name} is #{ship.length} units long.\n"
+      puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
 
-        until placed == true
-          coords = gets.chomp.upcase.split
-          placed = game.place_player_ships(ship, coords)
-          if placed == false
-            puts "Those are invalid coordinates. Please try again."
-          end
+      until placed == true
+        coords = gets.chomp.upcase.split
+        placed = game.place_player_ships(ship, coords)
+        if placed == false
+          puts "Those are invalid coordinates. Please try again."
         end
       end
+    end
     winner = false
     while winner == false
       fired_on = false
       puts "\n\n#{game.display_boards}"
       until fired_on == true
-        puts "Enter the coordinate of your shot:"
+        puts "Enter the coordinate of your shot:\n\n"
         coordinate = gets.chomp.upcase
         player_turn = game.take_player_turn(coordinate)
         if player_turn == "already fired"
