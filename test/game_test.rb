@@ -137,6 +137,23 @@ class GameTest < MiniTest::Test
     assert_equal true, [submarine, cruiser, destroyer, battleship, carrier].eql?(game_2.generate_ships)
   end
 
+  def test_custom_ships
+    game = Game.new(["player"], 4, 4, true, {"Voyager" => 3, "Discovery" => 2})
+    voyager = Ship.new("Voyager", 3)
+    discovery = Ship.new("Discovery", 2)
+    assert_equal true, [voyager,discovery].eql?(game.generate_ships)
+  end
+
+  def test_custom_board
+    game = Game.new(["player"], 10, 10, false)
+    assert_equal 100, game.game_data[:player][:board].cells.length
+    assert_equal 100, game.game_data[:computer][:board].cells.length
+  end
+
+  def test_custom_board_and_ships
+  end
+
+
   def test_generate_players
     player1 = Player.new("player",true)
     player2 = Player.new
