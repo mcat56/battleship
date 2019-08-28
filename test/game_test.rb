@@ -215,5 +215,4 @@ class GameTest < MiniTest::Test
     assert_equal "computer", @game.winner
   end
 
-
 end

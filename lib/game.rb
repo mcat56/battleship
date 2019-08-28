@@ -18,7 +18,7 @@ attr_reader :game_data, :turns, :winner
     @area          = @board_columns * @board_rows
     @attempts      = Hash.new(0)
     @turns         = []
-    @winner = ""
+    @winner        = ""
     generate_game_data
 
     @computer_shot_choices = @game_data[:player][:board].cells.keys
@@ -27,10 +27,10 @@ attr_reader :game_data, :turns, :winner
   def generate_game_data
     players = generate_players
     players.each do |player|
-      @game_data[player.name.to_sym] = {}
+      @game_data[player.name.to_sym]          = {}
       @game_data[player.name.to_sym][:player] = player
-      @game_data[player.name.to_sym][:ships] = generate_ships
-      @game_data[player.name.to_sym][:board] = Board.new(@board_columns, @board_rows)
+      @game_data[player.name.to_sym][:ships]  = generate_ships
+      @game_data[player.name.to_sym][:board]  = Board.new(@board_columns, @board_rows)
     end
   end
 
@@ -39,7 +39,7 @@ attr_reader :game_data, :turns, :winner
   end
 
   def generate_ships
-    ships = []
+    ships       = []
     total_ships = ships_to_add + 2
 
     total_ships.times do |index|
@@ -55,7 +55,7 @@ attr_reader :game_data, :turns, :winner
     players = []
     if @player_names.length == 1
       new_player = Player.new(@player_names.first, true)
-      computer = Player.new
+      computer   = Player.new
       players.push(new_player, computer)
     else
       @player_names.each do |player|
@@ -69,7 +69,6 @@ attr_reader :game_data, :turns, :winner
   def display_boards
     "=============COMPUTER BOARD=============\n#{@game_data[:computer][:board].render}==============PLAYER BOARD==============\n#{@game_data[:player][:board].render(true)}"""
   end
-
 
   def place_computer_ships
     @game_data[:computer][:ships].each do |ship|

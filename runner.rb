@@ -43,10 +43,12 @@ The Cruiser is two units long and the Submarine is three units long.
         end
       end
     end
+
     winner = false
     while winner == false
       fired_on = false
       puts "\n\n#{game.display_boards}"
+
       until fired_on == true
         puts "Enter the coordinate of your shot:"
         coordinate = gets.chomp
@@ -59,11 +61,15 @@ The Cruiser is two units long and the Submarine is three units long.
           puts "Those are invalid coordinates. Please try again."
         end
       end
+
       game.take_computer_turn
       puts "\n\n\n#{game.feedback}\n\n"
+
       winner = game.winner?
     end
+
     puts winner_message(game.winner)
+    
   elsif choice == "q"
     break
   else
