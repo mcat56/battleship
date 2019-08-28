@@ -17,7 +17,6 @@ def winner_message(winner)
   end
 end
 
-
 while true
   puts welcome
   choice = gets.chomp
@@ -41,14 +40,14 @@ while true
       if custom == "no"
         game = Game.new(["player"], columns, rows, false)
       else
-        ship_count = (((rows * columns-16)*0.04) + 2)
-        ship_data = {}
+        ship_count = ((rows * columns - 16) * 0.04) + 2
+        ship_data  = {}
         ship_count = (1..ship_count).to_a
         ship_count[-1].times do
           puts "Please enter a name for ship number #{ship_count[0]}"
           name = gets.chomp.capitalize
           puts "Please enter a length for ship number #{ship_count[0]} (length must be between 2-5)"
-          input = false
+          input  = false
           length = gets.chomp
           until input == true
             if ["2","3","4","5"].include?(length) == true
@@ -64,15 +63,13 @@ while true
         game = Game.new(["player"], columns, rows, true, ship_data)
       end
     end
+
     game.place_computer_ships
     puts """
 I have laid out my ships on the grid.
 You now need to lay out your #{game.game_data[:player][:ships].length} ships.
 """
-     game.game_data[:player][:ships].each do |ship|
-       puts "The #{ship.name} is #{ship.length} units long.\n"
-     end
-     game.game_data[:player][:ships].each do |ship|
+      game.game_data[:player][:ships].each do |ship|
         placed = false
         puts "#{game.game_data[:player][:board].render(true)}"
         puts "The #{ship.name} is #{ship.length} units long.\n"
@@ -86,6 +83,7 @@ You now need to lay out your #{game.game_data[:player][:ships].length} ships.
           end
         end
       end
+
     winner = false
     while winner == false
       fired_on = false
@@ -102,10 +100,12 @@ You now need to lay out your #{game.game_data[:player][:ships].length} ships.
           puts "Those are invalid coordinates. Please try again."
         end
       end
+
       game.take_computer_turn
       puts "\n\n\n#{game.feedback}\n\n"
       winner = game.winner?
     end
+
     puts winner_message(game.winner)
   elsif choice == "q"
     break
