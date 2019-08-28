@@ -6,7 +6,7 @@ require './lib/turn'
 require './lib/game'
 
 def welcome
-  "Welcome to BATTLESHIP\nEnter p to play. Enter q to quit"
+  "Welcome to BATTLESHIP\nEnter p to play\nEnter q to quit."
 end
 
 def winner_message(winner)
@@ -22,23 +22,47 @@ while true
   puts welcome
   choice = gets.chomp
   if choice == "p"
-    puts "Would you like to customize your ships? (Yes or No)"
+    puts "Do you want to customize your board? (Yes or No)"
     custom = gets.chomp.downcase
     if custom == "no"
-      game = Game.new(["player"], 4, 4, false)
-    else
-      puts "Please enter how many ships you want to make."
-      ship_count = gets.chomp.to_i
-      ship_data = {}
-      ship_count = (1..ship_count).to_a
-      ship_count[-1].times do
-        puts "Please enter a name and a length for ship number #{ship_count[0]}"
-        data = gets.chomp
-        data = data.scan(/\w+/)
-        ship_data[data[0].capitalize] = data[1].to_i
-        ship_count.shift
+      puts "Would you like to customize your ships? (Yes or No)"
+      custom = gets.chomp.downcase
+      if custom == "no"
+        game = Game.new(["player"], 4, 4, false)
       end
-      game = Game.new(["player"], 4, 4, true, ship_data)
+    else
+      puts "Please enter a number of columns for the boards"
+      columns = gets.chomp.to_i
+      puts "Please enter a number of rows for the boards"
+      rows = gets.chomp.to_i
+      ship_count = (((columns * rows) - 16) * 0.04).to_i + 2
+      puts "Would you like to customize your ships? (Yes or No)"
+      custom = gets.chomp.downcase
+      if custom == "no"
+        game = Game.new(["player"], columns, rows, false)
+      else
+        ship_count = (((rows * columns-16)*0.04) + 2)
+        ship_data = {}
+        ship_count = (1..ship_count).to_a
+        ship_count[-1].times do
+          puts "Please enter a name for ship number #{ship_count[0]}"
+          name = gets.chomp.capitalize
+          puts "Please enter a length for ship number #{ship_count[0]} (length must be between 2-5)"
+          input = false
+          length = gets.chomp
+          until input == true
+            if ["2","3","4","5"].include?(length) == true
+              ship_data[name] = length.to_i
+              ship_count.shift
+              input = true
+            else
+              puts "Please enter a correct length"
+              length = gets.chomp
+            end
+          end
+        end
+        game = Game.new(["player"], columns, rows, true, ship_data)
+      end
     end
     game.place_computer_ships
     puts """
@@ -89,56 +113,3 @@ You now need to lay out your #{game.game_data[:player][:ships].length} ships.
     puts "Invalid input."
   end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      # Enter c to play Classic (10x10 Board)
-      # Enter u to play Unique (custom board)
-  #   @choice = gets.chomp
-  #   if @choice == p
-  #     @columns = 4 && @rows = 4
-  #   elsif @choice == c
-  #     @columns = 10 && @rows = 10
-  #   elsif @choice == u
-  #     get_game_board_size
-  #   elsif @choice == q
-  #     return
-  #   end
-  # end
-
-
-
-
-  #
-  # def get_game_board_size
-  #   puts "Please enter a length for the boards"
-  #   @length = gets.chomp
-  #   puts "Please enter a width for the boards"
-  #   @width = gets.chomp
-  # end
