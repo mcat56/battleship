@@ -185,4 +185,32 @@ class BoardTest < MiniTest::Test
     assert_equal "  1 2 3 4 \nA X X X . \nB . M . . \nC . S . . \nD . S . . \n", @board.render(true)
   end
 
+  def test_ship_and_coordinates_are_same_length
+    assert_equal true, @board.same_length?(@cruiser, ["A1", "A2", "A3"])
+  end
+
+  def test_ship_and_coordinates_are_not_same_length
+    assert_equal false, @board.same_length?(@cruiser, ["A1", "A2"])
+  end
+
+  def test_all_coordinates_exist
+    assert_equal true, @board.all_valid_coordinates?(["A1", "A2", "A3"])
+  end
+
+  def test_at_least_one_coordinate_does_not_exist
+    assert_equal false, @board.all_valid_coordinates?(["D10", "A4"])
+  end
+
+  def test_all_cells_empty
+    
+    assert_equal true, @board.all_empty?(["A1", "A2", "A3"])
+  end
+
+  def test_at_least_one_cell_is_occupied
+    @board.cells["A1"].place_ship(@cruiser)
+    assert_equal false, @board.all_empty?(["A1", "A2", "A3"])
+  end
+
+
+
 end

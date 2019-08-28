@@ -78,14 +78,9 @@ attr_reader :cells,
   end
 
   def valid_placement?(ship, coordinates)
-    if ship.length != coordinates.length
-       return false
-    end
-    if coordinates.any? do |coordinate|
-      valid_coordinate?(coordinate) == false || @cells[coordinate].empty? == false
-      end
-      return false
-    end
+    return false if !same_length?(ship, coordinates)
+    return false if !all_valid_coordinates?(coordinates)
+    return false if !all_empty?(coordinates)
     across_or_down?(coordinates)
   end
 
@@ -135,9 +130,16 @@ attr_reader :cells,
     vertical_coordinates
   end
 
+  def same_length?(ship, coordinates)
+    ship.length == coordinates.length
+  end
 
+  def all_valid_coordinates?(coordinates)
+    coordinates.all? { |coordinate| valid_coordinate?(coordinate) }
+  end
 
-
-
+  def all_empty?(coordinates)
+    coordinates.all? { |coordinate| @cells[coordinate].empty? }
+  end
 
 end
