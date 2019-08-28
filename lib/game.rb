@@ -27,6 +27,97 @@ attr_reader :game_data, :turns, :winner
     @computer_shot_choices = @game_data[:player][:board].cells.keys
   end
 
+  
+  def display_boards
+    "=============COMPUTER BOARD=============\n#{@game_data[:computer][:board].render}==============PLAYER BOARD==============\n#{@game_data[:player][:board].render(true)}"""
+  end
+  
+  def place_computer_ships
+    @game_data[:computer][:ships].each do |ship|
+      placed = false
+      until placed == true
+        starting_coordinate = @game_data[:computer][:board].cells.keys.sample
+        coordinate_options  = @game_data[:computer][:board].generate_valid_coordinates([starting_coordinate], ship.length)
+        
+        coordinate_options.keep_if do |coordinates|
+          coordinates.length > 0
+        end
+        
+        coordinates = coordinate_options.sample
+        if coordinate_options.length > 0 && @game_data[:computer][:board].valid_placement?(ship, coordinates)
+          @game_data[:computer][:board].place(ship, coordinates)
+          placed = true
+        end
+      end
+    end
+  end
+  
+  def place_player_ships(ship, coordinates)
+    if @game_data[:player][:board].valid_placement?(ship, coordinates)
+      @game_data[:player][:board].place(ship, coordinates)
+      return true
+    end
+    return false
+  end
+  
+  def take_player_turn(coordinate)
+    if @game_data[:computer][:board].valid_coordinate?(coordinate)
+      if @game_data[:computer][:board].cells[coordinate].fired_upon?
+        return "already fired"
+      else
+        @game_data[:computer][:board].cells[coordinate].fire_upon
+        turn = Turn.new(coordinate, @game_data[:player], @game_data[:computer])
+        add_turn(turn)
+        return true
+      end
+    else
+      false
+    end
+  end
+  
+  def take_computer_turn
+    coordinate = @computer_shot_choices.sample
+    @game_data[:player][:board].cells[coordinate].fire_upon
+    
+    turn = Turn.new(coordinate, @game_data[:computer], @game_data[:player])
+    add_turn(turn)
+    @computer_shot_choices.delete(coordinate)
+    
+    check_for_winner
+  end
+  
+  def feedback
+    feedback_string = ""
+    
+    result = @turns[-2].defender_data[:board].cells[@turns[-2].coordinate].render
+    if result == "M"
+      feedback_string << "Your shot on #{@turns[-2].coordinate} was a miss.\n"
+    elsif result == "H"
+      feedback_string << "Your shot on #{@turns[-2].coordinate} was a hit!\n"
+    elsif result == "X"
+      ship_name = @turns[-2].defender_data[:board].cells[@turns[-2].coordinate].ship.name
+      feedback_string << "Your shot on #{@turns[-2].coordinate} sunk my #{ship_name}!\n"
+    end
+    result = @turns[-1].defender_data[:board].cells[@turns[-1].coordinate].render
+    if result == "M"
+      feedback_string << "My shot on #{@turns[-1].coordinate} was a miss."
+    elsif result == "H"
+      feedback_string << "My shot on #{@turns[-1].coordinate} was a hit!"
+    elsif result == "X"
+      ship_name = @turns[-1].defender_data[:board].cells[@turns[-1].coordinate].ship.name
+      feedback_string << "My shot on #{@turns[-1].coordinate} sunk your #{ship_name}!"
+    end
+    feedback_string
+  end
+  
+  def winner?
+    @winner != ""
+  end
+
+  ###########
+  # Helpers #
+  ###########
+
   def generate_game_data
     @players.each do |player|
       @game_data[player.name.to_sym]          = {}
@@ -74,89 +165,7 @@ attr_reader :game_data, :turns, :winner
     end
     players
   end
-
-  def display_boards
-    "=============COMPUTER BOARD=============\n#{@game_data[:computer][:board].render}==============PLAYER BOARD==============\n#{@game_data[:player][:board].render(true)}"""
-  end
-
-  def place_computer_ships
-    @game_data[:computer][:ships].each do |ship|
-      placed = false
-      until placed == true
-        starting_coordinate = @game_data[:computer][:board].cells.keys.sample
-        coordinate_options  = @game_data[:computer][:board].generate_valid_coordinates([starting_coordinate], ship.length)
-
-        coordinate_options.keep_if do |coordinates|
-          coordinates.length > 0
-        end
-
-        coordinates = coordinate_options.sample
-        if coordinate_options.length > 0 && @game_data[:computer][:board].valid_placement?(ship, coordinates)
-          @game_data[:computer][:board].place(ship, coordinates)
-          placed = true
-        end
-      end
-    end
-  end
-
-  def place_player_ships(ship, coordinates)
-    if @game_data[:player][:board].valid_placement?(ship, coordinates)
-      @game_data[:player][:board].place(ship, coordinates)
-      return true
-    end
-    return false
-  end
-
-  def take_player_turn(coordinate)
-    if @game_data[:computer][:board].valid_coordinate?(coordinate)
-      if @game_data[:computer][:board].cells[coordinate].fired_upon?
-        return "already fired"
-      else
-        @game_data[:computer][:board].cells[coordinate].fire_upon
-        turn = Turn.new(coordinate, @game_data[:player], @game_data[:computer])
-        add_turn(turn)
-        return true
-      end
-    else
-      false
-    end
-  end
-
-  def take_computer_turn
-    coordinate = @computer_shot_choices.sample
-    @game_data[:player][:board].cells[coordinate].fire_upon
-
-    turn = Turn.new(coordinate, @game_data[:computer], @game_data[:player])
-    add_turn(turn)
-    @computer_shot_choices.delete(coordinate)
-
-    check_for_winner
-  end
-
-  def feedback
-    feedback_string = ""
-    
-    result = @turns[-2].defender_data[:board].cells[@turns[-2].coordinate].render
-    if result == "M"
-      feedback_string << "Your shot on #{@turns[-2].coordinate} was a miss.\n"
-    elsif result == "H"
-      feedback_string << "Your shot on #{@turns[-2].coordinate} was a hit!\n"
-    elsif result == "X"
-      ship_name = @turns[-2].defender_data[:board].cells[@turns[-2].coordinate].ship.name
-      feedback_string << "Your shot on #{@turns[-2].coordinate} sunk my #{ship_name}!\n"
-    end
-    result = @turns[-1].defender_data[:board].cells[@turns[-1].coordinate].render
-    if result == "M"
-      feedback_string << "My shot on #{@turns[-1].coordinate} was a miss."
-    elsif result == "H"
-      feedback_string << "My shot on #{@turns[-1].coordinate} was a hit!"
-    elsif result == "X"
-      ship_name = @turns[-1].defender_data[:board].cells[@turns[-1].coordinate].ship.name
-      feedback_string << "My shot on #{@turns[-1].coordinate} sunk your #{ship_name}!"
-    end
-    feedback_string
-  end
-
+  
   def add_turn(turn)
     @turns.push(turn)
   end
@@ -167,10 +176,6 @@ attr_reader :game_data, :turns, :winner
     elsif @game_data[:player][:ships].all? { |ship| ship.sunk? }
       @winner << "#{@game_data[:computer][:player].name}"
     end
-  end
-
-  def winner?
-    @winner != ""
   end
 
 end
