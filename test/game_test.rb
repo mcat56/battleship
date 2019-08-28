@@ -74,8 +74,8 @@ class GameTest < MiniTest::Test
 
   def test_a_turn
     turn1 = Turn.new("B2", @game_data[:player], @game_data[:computer])
+    @game.add_turn(turn1)
     assert_equal turn1, @game.turns.last
-    assert_equal true, @c_board.cells["B2"].fired_upon?
   end
 
   def test_feedback_for_miss
@@ -119,28 +119,6 @@ class GameTest < MiniTest::Test
     assert_equal "Your shot on A1 sunk my Submarine!\nMy shot on A1 sunk your Cruiser!", @game.feedback
   end
 
-  def test_game_over?
-    @p_board.place(@p_cruiser, ["A1", "A2", "A3"])
-    turn1 = Turn.new("A1", @game_data[:computer], @game_data[:player])
-    turn2 = Turn.new("A2", @game_data[:computer], @game_data[:player])
-    turn3 = Turn.new("A3", @game_data[:computer], @game_data[:player])
-    @p_board.place(@p_submarine, ["C2", "D2"])
-    assert_equal false, @game.game_over?(@game_data[:player])
-    turn4 = Turn.new("C2", @game_data[:computer], @game_data[:player])
-    turn5 = Turn.new("D2", @game_data[:computer], @game_data[:player])
-    assert_equal true, @game.game_over?(@game_data[:player])
-  end
-
-  def test_end_game_feedback
-    @p_board.place(@p_cruiser, ["A1", "A2", "A3"])
-    turn1 = Turn.new("A1", @game_data[:computer], @game_data[:player])
-    turn2 = Turn.new("A2", @game_data[:computer], @game_data[:player])
-    turn3 = Turn.new("A3", @game_data[:computer], @game_data[:player])
-    @p_board.place(@p_submarine, ["C2", "D2"])
-    turn4 = Turn.new("C2", @game_data[:computer], @game_data[:player])
-    turn5 = Turn.new("D2", @game_data[:computer], @game_data[:player])
-    assert_equal "I won!", @game.winner_feedback
-  end
 
   def test_ships_to_add
     assert_equal 0, @game.ships_to_add
@@ -149,31 +127,41 @@ class GameTest < MiniTest::Test
   end
 
   def test_generate_ships
-    game_2 = Game.new(1, 10, 10)
+    game_2 = Game.new(["player"], 10, 10)
     submarine = Ship.new("Submarine", 2)
     cruiser = Ship.new("Cruiser", 3)
     destroyer = Ship.new("Destroyer", 3)
     battleship = Ship.new("Battleship", 4)
     carrier = Ship.new("Carrier", 5)
-    assert_equal [submarine, cruiser], @game.generate_ships
-    assert_equal [submarine, cruiser, destroyer, battleship, carrier], game_2.generate_ships
+    assert_equal true, [submarine, cruiser].eql?(@game.generate_ships)
+    assert_equal true, [submarine, cruiser, destroyer, battleship, carrier].eql?(game_2.generate_ships)
   end
 
+  def test_custom_ships
+    game = Game.new(["player"], 4, 4, true, {"Voyager" => 3, "Discovery" => 2})
+    voyager = Ship.new("Voyager", 3)
+    discovery = Ship.new("Discovery", 2)
+    assert_equal true, [voyager,discovery].eql?(game.generate_ships)
+  end
+
+  def test_custom_board
+    game = Game.new(["player"], 10, 10, false)
+    assert_equal 100, game.game_data[:player][:board].cells.length
+    assert_equal 100, game.game_data[:computer][:board].cells.length
+  end
+
+  def test_custom_board_and_ships
+  end
+
+
   def test_generate_players
-    player_mario = Player.new("Mario", true)
-    player_luigi = Player.new("Luigi", true)
-
-    assert_equal [@player, @computer], @game.generate_players
-
-    @game = Game.new(["Mario"], 4, 4)
-    assert_equal [player_mario, @computer], @game.generate_players
-
-    @game = Game.new(["Mario", "Luigi"], 4, 4)
-    assert_equal [player_mario, player_luigi], @game.generate_players
+    player1 = Player.new("player",true)
+    player2 = Player.new
+    assert_equal [player1,player2], @game.generate_players
   end
 
   def test_display_the_boards
-    board_string = "=============COMPUTER BOARD=============\n#{@game_data[:computer][:board].render}==============PLAYER BOARD==============\n#{@game_data[:computer][:board].render(true)}"
+    board_string = "=============COMPUTER BOARD=============\n#{@game_data[:computer][:board].render}==============PLAYER BOARD==============\n#{@game_data[:player][:board].render(true)}"
 
     assert_equal board_string, @game.display_boards
   end
