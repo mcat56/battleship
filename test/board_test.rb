@@ -202,7 +202,6 @@ class BoardTest < MiniTest::Test
   end
 
   def test_all_cells_empty
-    
     assert_equal true, @board.all_empty?(["A1", "A2", "A3"])
   end
 
@@ -210,7 +209,5 @@ class BoardTest < MiniTest::Test
     @board.cells["A1"].place_ship(@cruiser)
     assert_equal false, @board.all_empty?(["A1", "A2", "A3"])
   end
-
-
 
 end
