@@ -10,8 +10,9 @@ attr_reader :game_data, :turns, :winner
     { name: "Carrier",    length: 5 }
   ]
 
-  def initialize(player_names, board_columns = 4, board_rows = 4, custom_ships = false, ship_data = {})
+  def initialize(player_names, board_columns = 4, board_rows = 4, custom_ships = false, ship_data = {}, smart = false)
     @game_data     = {}
+    @smart = smart
     @custom_ships = custom_ships
     @ship_data = ship_data
     @player_names  = player_names
@@ -124,13 +125,38 @@ attr_reader :game_data, :turns, :winner
   end
 
   def take_computer_turn
-    coordinate = @computer_shot_choices.sample
-    @game_data[:player][:board].cells[coordinate].fire_upon
-    turn = Turn.new(coordinate, @game_data[:computer], @game_data[:player])
-    add_turn(turn)
-    @computer_shot_choices.delete(coordinate)
+    if @smart == false || @turns.length < 3
+      coordinate = @computer_shot_choices.sample
+      @game_data[:player][:board].cells[coordinate].fire_upon
+      turn = Turn.new(coordinate, @game_data[:computer], @game_data[:player])
+      add_turn(turn)
+      @computer_shot_choices.delete(coordinate)
 
-    check_for_winner
+      check_for_winner
+    else
+      if @turns.length >= 3
+        computer_shot_choices =  @game_data[:player][:board].cells.keys
+        if @game_data[:computer][:board].cells((@turns[-2].coordinate)).render(true) == "H"
+          computer_shot_choices.keep_if do |key|
+            @game_data[:player][:board].generate_horizontal_coordinates(key, 3).include?(key) || @game_data[:player][:board].generate_vertical_coordinates(key, 3).include?(key)
+          end
+          coordinate = computer_shot_choices.sample
+          @game_data[:player][:board].cells[coordinate].fire_upon
+          turn = Turn.new(coordinate, @game_data[:computer], @game_data[:player])
+          add_turn(turn)
+          @computer_shot_choices.delete(coordinate)
+          check_for_winner
+        else
+          coordinate = @computer_shot_choices.sample
+          @game_data[:player][:board].cells[coordinate].fire_upon
+          turn = Turn.new(coordinate, @game_data[:computer], @game_data[:player])
+          add_turn(turn)
+          @computer_shot_choices.delete(coordinate)
+
+          check_for_winner
+        end
+      end
+    end
   end
 
   def feedback

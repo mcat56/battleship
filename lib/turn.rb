@@ -7,4 +7,4 @@ class Turn
     @defender_data = defender_data
   end
 
-end
+end 
