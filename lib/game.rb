@@ -12,8 +12,8 @@ attr_reader :game_data, :turns, :winner
 
   def initialize(player_names, board_columns = 4, board_rows = 4, custom_ships = false, ship_data = {})
     @game_data     = {}
-    @custom_ships = custom_ships
-    @ship_data = ship_data
+    @custom_ships  = custom_ships
+    @ship_data     = ship_data
     @player_names  = player_names
     @board_columns = board_columns
     @board_rows    = board_rows
@@ -29,7 +29,7 @@ attr_reader :game_data, :turns, :winner
 
   def generate_game_data
     @players.each do |player|
-      @game_data[player.name.to_sym] = {}
+      @game_data[player.name.to_sym]          = {}
       @game_data[player.name.to_sym][:player] = player
       @game_data[player.name.to_sym][:ships]  = generate_ships
       @game_data[player.name.to_sym][:board]  = Board.new(@board_columns, @board_rows)
@@ -43,6 +43,7 @@ attr_reader :game_data, :turns, :winner
   def generate_ships
     total_ships = ships_to_add + 2
     ships       = []
+    
     if @custom_ships == false
       total_ships.times do |index|
           name   = SHIPS[index % 5][:name]
