@@ -43,7 +43,6 @@ attr_reader :cells,
     @cells.has_key?(coordinate)
   end
 
-
   def place(ship, coordinates)
     if valid_placement?(ship, coordinates)
       coordinates.each { |coordinate| @cells[coordinate].place_ship(ship) }
@@ -66,16 +65,24 @@ attr_reader :cells,
 
     # Render each row
     rows.each do |rw|
-      letter = calculate_alphabetical_coordinate(rw)
+      row << construct_row_render(rw, columns, padding, display)
+      row << "\n"
+    end
+    row
+  end
+
+  def construct_row_render(row_number, columns, padding, display)
+    row = ""
+    number_string_length = @columns.to_s.length
+    letter = calculate_alphabetical_coordinate(row_number)
       row << letter.center(padding + 1)
       columns.each do |col|
         coordinate = letter + col.to_s
         row << "#{@cells[coordinate].render(display)}".center(padding + number_string_length)
       end
-      row << "\n"
-    end
     row
   end
+
 
   def valid_placement?(ship, coordinates)
     return false if !same_length?(ship, coordinates)
