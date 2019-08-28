@@ -119,7 +119,6 @@ class GameTest < MiniTest::Test
     assert_equal "Your shot on A1 sunk my Submarine!\nMy shot on A1 sunk your Cruiser!", @game.feedback
   end
 
-
   def test_ships_to_add
     assert_equal 0, @game.ships_to_add
     game2 = Game.new(["player"], 10, 10)
@@ -156,16 +155,15 @@ class GameTest < MiniTest::Test
     destroyer = Ship.new("Destroyer", 5)
     mystic = Ship.new("Mystic", 3)
     titanic = Ship.new("Titanic", 2)
-    assert_equal true, [mystic,titanic,voyager,destroyer].eql?(game.generate_ships)
+    assert_equal true, [mystic, titanic, voyager, destroyer].eql?(game.generate_ships)
     assert_equal 625, game.game_data[:player][:board].cells.length
     assert_equal 625, game.game_data[:computer][:board].cells.length
   end
 
-
   def test_generate_players
     player1 = Player.new("player",true)
     player2 = Player.new
-    assert_equal [player1,player2], @game.generate_players
+    assert_equal [player1, player2], @game.generate_players
   end
 
   def test_display_the_boards
