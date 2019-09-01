@@ -183,6 +183,50 @@ class GameTest < MiniTest::Test
     assert_equal [turn1, turn2], @game.turns
   end
 
+  def test_for_smart_computer
+    # game = Game.new(["player"], 4, 4, false, {}, true)
+    # game.game_data[:player][:board].place(@p_cruiser, ["C2", "C3", "C4"])
+    # turn1 = Turn.new("A1", game.game_data[:player], game.game_data[:computer])
+    # turn2 = Turn.new("C3", game.game_data[:computer], game.game_data[:player])
+    # game.game_data[:player][:board].cells["C3"].fire_upon
+    # turn3 = Turn.new("A2", game.game_data[:player], game.game_data[:computer])
+    # game.add_turn(turn1)
+    # game.add_turn(turn2)
+    # game.add_turn(turn3)
+    # game.take_computer_turn
+    # options = ["C2","C4", "B3", "D3"]
+    # assert_equal true , options.include?(game.turns[-1].coordinate)
+    #
+    game2 = Game.new(["player"], 4, 4, false, {}, true)
+    game2.game_data[:player][:board].place(@p_cruiser, ["B1", "C1", "D1"])
+    turn1 = Turn.new("A1", game2.game_data[:player], game2.game_data[:computer])
+    turn2 = Turn.new("B1", game2.game_data[:computer], game2.game_data[:player])
+    game2.game_data[:player][:board].cells["B1"].fire_upon
+    turn3 = Turn.new("A2", game2.game_data[:player], game2.game_data[:computer])
+    game2.add_turn(turn1)
+    game2.add_turn(turn2)
+    game2.add_turn(turn3)
+    game2.take_computer_turn
+    options = ["A1","C1", "B2"]
+    assert_equal true , options.include?(game2.turns[-1].coordinate)
+
+
+    #
+    # game3 = Game.new(["player"], 4, 4, false, {}, true)
+    # game3.game_data[:player][:board].place(@p_cruiser, ["A4", "B4", "C4"])
+    # turn1 = Turn.new("A1", game3.game_data[:player], game3.game_data[:computer])
+    # turn2 = Turn.new("C4", game3.game_data[:computer], game3.game_data[:player])
+    # game3.game_data[:player][:board].cells["C4"].fire_upon
+    # turn3 = Turn.new("A2", game3.game_data[:player], game3.game_data[:computer])
+    # game3.add_turn(turn1)
+    # game3.add_turn(turn2)
+    # game3.add_turn(turn3)
+    # game3.take_computer_turn
+    # options = ["C3", "B4", "D4"]
+    # assert_equal true , options.include?(game3.turns[-1].coordinate)
+  end
+
+
   def test_winner?
     @game.check_for_winner
     assert_equal false, @game.winner?

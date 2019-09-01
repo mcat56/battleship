@@ -20,6 +20,7 @@ attr_reader :game_data, :turns, :winner
     @board_rows    = board_rows
     @area          = @board_columns * @board_rows
     @attempts      = Hash.new(0)
+    @direction = nil
     @turns         = []
     @winner = ""
     @players = generate_players
@@ -125,7 +126,7 @@ attr_reader :game_data, :turns, :winner
   end
 
   def take_computer_turn
-    if @smart == false || @turns.length < 3
+    if  @turns.length < 3 || @smart != true
       coordinate = @computer_shot_choices.sample
       @game_data[:player][:board].cells[coordinate].fire_upon
       turn = Turn.new(coordinate, @game_data[:computer], @game_data[:player])
@@ -134,16 +135,48 @@ attr_reader :game_data, :turns, :winner
 
       check_for_winner
     else
-      computer_shot_choices =  @game_data[:player][:board].cells.keys
 
-      if @game_data[:computer][:board].cells[@turns[-2].coordinate].render == "H"
-        computer_shot_choices.keep_if do |key|
-          @game_data[:player][:board].generate_horizontal_coordinates(key, 3).include?(key) || @game_data[:player][:board].generate_vertical_coordinates(key, 3).include?(key)
+      keys =  @game_data[:player][:board].cells.keys
+
+
+      if @game_data[:player][:board].cells[(@turns[-2].coordinate)].render == "H"
+        coord = @turns[-2].coordinate
+
+        if @direction == nil
+          keys = keys.keep_if do |key|
+            (keys.index(key) / @board_columns) == ((keys.index(coord) / @board_columns) + 1) && key[1] == coord[1] ||
+            (keys.index(key) / @board_columns) == ((keys.index(coord) / @board_columns) - 1) && key[1] == coord[1] ||
+            keys.index(key) == (keys.index(coord) + 1 ) && key[0] == coord[0] ||
+            keys.index(key) == (keys.index(coord) - 1) && key[0] == coord[0]
+          end
+        elsif @direction == "horizontal"
+          keys = keys.keep_if do |key|
+            keys.index(key) == (keys.index(coord) + 1 ) && key[0] == coord[0] ||
+            keys.index(key) == (keys.index(coord) - 1) && key[0] == coord[0]
+          end
+        elsif @direction == "vertical"
+          keys = keys.keep_if do |key|
+            (keys.index(key) / @board_columns) == ((keys.index(coord) / @board_columns) + 1) && key[1] == coord[1] ||
+            (keys.index(key) / @board_columns) == ((keys.index(coord) / @board_columns) - 1) && key[1] == coord[1]
+          end
         end
-        coordinate = computer_shot_choices.sample
+
+
+        keys = keys.select do |key|
+          @game_data[:player][:board].cells[key].fired_upon? == false
+        end
+
+        coordinate = keys.sample
         @game_data[:player][:board].cells[coordinate].fire_upon
         turn = Turn.new(coordinate, @game_data[:computer], @game_data[:player])
         add_turn(turn)
+        if @game_data[:player][:board].cells[(@turns[-1].coordinate)].render == "H"
+          if @turns[-1].coordinate[0] == @turns[-3].coordinate[0]
+            @direction = "horizontal"
+          else
+            @direction = "vertical"
+          end
+        end
         @computer_shot_choices.delete(coordinate)
         check_for_winner
       else
@@ -154,7 +187,7 @@ attr_reader :game_data, :turns, :winner
         @computer_shot_choices.delete(coordinate)
 
         check_for_winner
-      end 
+      end
     end
   end
 

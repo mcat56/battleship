@@ -24,82 +24,52 @@ while true
   if choice == "p"
     puts "Do you want to play with a smart computer? (Yes or No)"
     smart = gets.chomp.downcase
-    if smart == "no"
-      puts "Do you want to customize your board? (Yes or No)"
-      custom = gets.chomp.downcase
-      if custom == "no"
-        puts "Would you like to customize your ships? (Yes or No)"
-        custom = gets.chomp.downcase
-        if custom == "no"
-          game = Game.new(["player"], 4, 4, false)
-        end
-      end
-    else
-      puts "Do you want to customize your board? (Yes or No)"
-      custom = gets.chomp.downcase
-      if custom == "no"
-        puts "Would you like to customize your ships? (Yes or No)"
-        custom = gets.chomp.downcase
-        if custom == "no"
-          game = Game.new(["player"], 4, 4, false, {}, true)
-        else
-          ship_count = (((rows * columns-16)*0.04) + 2)
-          ship_data = {}
-          ship_count = (1..ship_count).to_a
-          ship_count[-1].times do
-            puts "Please enter a name for ship number #{ship_count[0]}"
-            name = gets.chomp.capitalize
-            puts "Please enter a length for ship number #{ship_count[0]} (length must be between 2-5)"
-            input = false
-            length = gets.chomp
-            until input == true
-              if ["2","3","4","5"].include?(length) == true
-                ship_data[name] = length.to_i
-                ship_count.shift
-                input = true
-              else
-                puts "Please enter a correct length"
-                length = gets.chomp
-              end
-            end
-          end
-        end
-        game = Game.new(["player"], columns, rows, true, ship_data, true)
+    puts "Do you want to customize your board? (Yes or No)"
+    custom = gets.chomp.downcase
+    puts "Would you like to customize your ships? (Yes or No)"
+    custom_ships = gets.chomp.downcase
+      if smart == "no"
+        smart = false
       else
-        puts "Please enter a number of columns for the boards"
-        columns = gets.chomp.to_i
-        puts "Please enter a number of rows for the boards"
-        rows = gets.chomp.to_i
-        ship_count = (((columns * rows) - 16) * 0.04).to_i + 2
-        puts "Would you like to customize your ships? (Yes or No)"
-        custom = gets.chomp.downcase
-        if custom == "no"
-          game = Game.new(["player"], columns, rows, false, {}, true)
+        smart = true
+      end
+        if custom == "yes"
+          puts "Please enter a number of columns for the boards"
+          columns = gets.chomp.to_i
+          puts "Please enter a number of rows for the boards"
+          rows = gets.chomp.to_i
         else
-          ship_count = (((rows * columns-16)*0.04) + 2)
-          ship_data = {}
-          ship_count = (1..ship_count).to_a
-          ship_count[-1].times do
-            puts "Please enter a name for ship number #{ship_count[0]}"
-            name = gets.chomp.capitalize
-            puts "Please enter a length for ship number #{ship_count[0]} (length must be between 2-5)"
-            input = false
-            length = gets.chomp
-            until input == true
-              if ["2","3","4","5"].include?(length) == true
-                ship_data[name] = length.to_i
-                ship_count.shift
-                input = true
-              else
-                puts "Please enter a correct length"
-                length = gets.chomp
+          columns = 4
+          rows = 4
+        end
+          if custom_ships == "yes"
+            custom_ships = true
+            ship_count = (((rows * columns-16)*0.04) + 2)
+            ship_data = {}
+            ship_count = (1..ship_count).to_a
+            ship_count[-1].times do
+              puts "Please enter a name for ship number #{ship_count[0]}"
+              name = gets.chomp.capitalize
+              puts "Please enter a length for ship number #{ship_count[0]} (length must be between 2-5)"
+              input = false
+              length = gets.chomp
+              until input == true
+                if ["2","3","4","5"].include?(length) == true
+                  ship_data[name] = length.to_i
+                  ship_count.shift
+                  input = true
+                else
+                  puts "Please enter a correct length"
+                  length = gets.chomp
+                end
               end
             end
+          else
+            custom_ships = false
+            ship_data = {}
           end
-          game = Game.new(["player"], 4, 4, true, ship_data, true)
-        end
-      end
-    end
+          game = Game.new(["player"], columns, rows, custom_ships, ship_data, smart)
+
   game.place_computer_ships
   puts """
 I have laid out my ships on the grid.
